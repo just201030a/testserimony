@@ -793,6 +793,29 @@ function doFilter(e,filter){
 /* ============================= */
 /* PRODUCT DETAIL                */
 /* ============================= */
+
+function buildOrderLink(product, shade){
+  var btn = document.getElementById("dob");
+  if(!btn) return;
+  if(!shade){
+    var sel = document.querySelector("#product-detail-content .selected-text");
+    if(sel) shade = sel.textContent.trim();
+    if(shade === "SELECT SHADE") shade = "";
+  }
+  var name  = (product.name  || "").trim();
+  var brand = (product.brand || "").trim();
+  var price = (product.price || "").replace(/<[^>]+>/gi,"").trim();
+  var msg = "Hi! I'd like to order:\n\n";
+  msg += "Product: " + name  + "\n";
+  msg += "Brand: "   + brand + "\n";
+  if(shade && shade !== "SELECT SHADE"){
+    msg += "Shade: " + shade + "\n";
+  }
+  msg += "Price: "   + price + "\n";
+  btn.href = "https://wa.me/97334043024?text=" + encodeURIComponent(msg);
+  btn.target = "_blank";
+}
+
 function showProduct(id){
   var p=P[id]; if(!p)return;
   var gv=document.getElementById("shop-grid-view");
@@ -822,7 +845,7 @@ function showProduct(id){
     +'<h2 class="product-name">'+p.name+'</h2>'
     +'<p class="product-price">'+p.price+'</p>'
     +shHtml+optsHTML
-    +'<a href="https://ig.me/m/glow.bysunkissed" class="add-to-bag" target="_blank" id="dob">ORDER ON INSTAGRAM</a>'
+    +'<a href="#" class="add-to-bag" id="dob" target="_blank">ORDER ON WHATSAPP</a>'
     +'<p class="original-product">100% ORIGINAL PRODUCT</p>'
     +'</div></div></section></div></div></section>';
 
@@ -830,6 +853,7 @@ function showProduct(id){
   dv.classList.add("visible");
   window.scrollTo({top:0,behavior:"smooth"});
   history.pushState({product:id},"","?product="+id);
+  buildOrderLink(p, null);
 
   var i1=document.getElementById("di1"),i2=document.getElementById("di2");
   if(i1&&i2){
@@ -852,6 +876,7 @@ function showProduct(id){
         box.classList.remove("active");
         stEl.textContent="AVAILABLE";stEl.className="stock-status in";
         oBtn.style.opacity="1";oBtn.style.pointerEvents="auto";
+        buildOrderLink(p, opt.textContent);
       });
     });
     document.addEventListener("click",function(e){if(!box.contains(e.target))box.classList.remove("active");});
