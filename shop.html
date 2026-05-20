@@ -765,6 +765,37 @@ var P = {
   }
 };
 
+
+/* ============================= */
+/* BUILD INSTAGRAM ORDER LINK    */
+/* ============================= */
+function buildOrderLink(product, selectedShade, btn){
+  if(!btn) return;
+
+  var shade = selectedShade || "";
+  // if no shade passed, try to get active one
+  if(!shade){
+    var activeShade = document.querySelector("#product-detail-content .shade-btn.active, #product-detail-content .combo-option.active, #product-detail-content .selected-text");
+    if(activeShade) shade = activeShade.textContent.trim();
+  }
+
+  var msg = "مرحبا 🌟\n\n";
+  msg += "أبي أطلب:\n";
+  msg += "━━━━━━━━━━━━━━━\n";
+  msg += "🛍 " + product.name.trim() + "\n";
+  if(product.brand) msg += "✨ " + product.brand + "\n";
+  if(shade && shade !== "SELECT SHADE") msg += "🎨 " + shade + "\n";
+  // clean price from <br> tags
+  var cleanPrice = product.price.replace(/<[^>]+>/gi,"").trim();
+  msg += "💰 " + cleanPrice + "\n";
+  msg += "━━━━━━━━━━━━━━━\n";
+
+  var encoded = encodeURIComponent(msg);
+  btn.href = "https://ig.me/m/glow.bysunkissed?text=" + encoded;
+  btn.target = "_blank";
+  btn.onclick = null;
+}
+
 /* ============================= */
 /* FILTER                        */
 /* ============================= */
@@ -831,6 +862,10 @@ function showProduct(id){
   window.scrollTo({top:0,behavior:"smooth"});
   history.pushState({product:id},"","?product="+id);
 
+  /* Build initial order link */
+  var oBtn2=document.getElementById("dob");
+  if(oBtn2) buildOrderLink(p, null, oBtn2);
+
   var i1=document.getElementById("di1"),i2=document.getElementById("di2");
   if(i1&&i2){
     i1.addEventListener("mouseenter",function(){i1.style.opacity="0";i2.style.opacity="1";});
@@ -852,6 +887,7 @@ function showProduct(id){
         box.classList.remove("active");
         stEl.textContent="AVAILABLE";stEl.className="stock-status in";
         oBtn.style.opacity="1";oBtn.style.pointerEvents="auto";
+        buildOrderLink(p, opt.textContent, oBtn);
       });
     });
     document.addEventListener("click",function(e){if(!box.contains(e.target))box.classList.remove("active");});
@@ -891,6 +927,16 @@ window.addEventListener("popstate",function(e){if(!e.state||!e.state.product)hid
   var pv=document.getElementById("announcePrev");
   var idx=0,timer=null;
   function upd(){if(sl)sl.style.transform="translateX(-"+(idx*100)+"%)";}
+  function start(){timer=setInterval/* ============================= */
+/* ANNOUNCEMENT BAR              */
+/* ============================= */
+(function(){
+  var sl=document.getElementById("announcementSlider");
+  var items=document.querySelectorAll(".announcement-item");
+  var nx=document.getElementById("announceNext");
+  var pv=document.getElementById("announcePrev");
+  var idx=0,timer=null;
+  function upd(){if(sl)sl.style.transform="translateX(-"+(idx*100)+"%)";}
   function start(){timer=setInterval(function(){idx=(idx+1)%items.length;upd();},4000);}
   function stop(){clearInterval(timer);}
   if(nx)nx.addEventListener("click",function(){idx=(idx+1)%items.length;upd();});
@@ -898,38 +944,85 @@ window.addEventListener("popstate",function(e){if(!e.state||!e.state.product)hid
   var bar=document.querySelector(".announcement-bar");
   if(bar){bar.addEventListener("mouseenter",stop);bar.addEventListener("mouseleave",start);}
   start();
+})();
 
-  var hamburger=document.querySelector(".menu-icon");
-  var megaMenu=document.querySelector(".mega-menu");
-  var mobileMenu=document.querySelector(".mobile-menu");
-  var mobileOverlay=document.querySelector(".mobile-overlay");
-  var closeBtn=document.getElementById("closeMenuBtn");
+/* ============================= */
+/* HAMBURGER + MOBILE MENU       */
+/* ============================= */
+(function(){
+  var hamburger   = document.querySelector(".menu-icon");
+  var megaMenu    = document.querySelector(".mega-menu");
+  var mobileMenu  = document.querySelector(".mobile-menu");
+  var mobileOverlay = document.querySelector(".mobile-overlay");
+  var closeBtn    = document.getElementById("closeMenuBtn");
 
-  function closeMega(){if(megaMenu)megaMenu.classList.remove("active");if(hamburger&&window.innerWidth>768)hamburger.classList.remove("active");}
-  window.closeMobileMenu=function(){if(mobileMenu)mobileMenu.classList.remove("active");if(mobileOverlay)mobileOverlay.classList.remove("active");if(hamburger&&window.innerWidth<=768)hamburger.classList.remove("active");document.body.classList.remove("menu-open");}
-  function openMobile(){if(!mobileMenu||!mobileOverlay)return;mobileMenu.classList.add("active");mobileOverlay.classList.add("active");if(hamburger)hamburger.classList.add("active");document.body.classList.add("menu-open");}
-
-  if(hamburger&&megaMenu){
-    hamburger.addEventListener("click",function(e){if(window.innerWidth<=768)return;e.stopPropagation();megaMenu.classList.toggle("active");hamburger.classList.toggle("active");});
-    megaMenu.addEventListener("click",function(e){if(window.innerWidth<=768)return;e.stopPropagation();});
-    document.addEventListener("click",function(){if(window.innerWidth<=768)return;closeMega();});
+  function closeMega(){
+    if(megaMenu) megaMenu.classList.remove("active");
+    if(hamburger && window.innerWidth > 768) hamburger.classList.remove("active");
   }
-  if(hamburger&&mobileMenu){
-    hamburger.addEventListener("click",function(e){if(window.innerWidth>768)return;e.stopPropagation();mobileMenu.classList.contains("active")?closeMobileMenu():openMobile();});
-    mobileMenu.addEventListener("click",function(e){e.stopPropagation();});
+  function openMobile(){
+    if(!mobileMenu||!mobileOverlay) return;
+    mobileMenu.classList.add("active");
+    mobileOverlay.classList.add("active");
+    if(hamburger) hamburger.classList.add("active");
+    document.body.classList.add("menu-open");
   }
-  if(mobileOverlay)mobileOverlay.addEventListener("click",closeMobileMenu);
-  if(closeBtn)closeBtn.addEventListener("click",closeMobileMenu);
+  function closeMobile(){
+    if(mobileMenu) mobileMenu.classList.remove("active");
+    if(mobileOverlay) mobileOverlay.classList.remove("active");
+    if(hamburger && window.innerWidth<=768) hamburger.classList.remove("active");
+    document.body.classList.remove("menu-open");
+  }
+  window.closeMobileMenu = closeMobile;
 
-  var mbt=document.getElementById("mobileBrandsToggle");
-  var mbm=document.getElementById("mobileBrandsMenu");
-  if(mbt&&mbm)mbt.addEventListener("click",function(){mbt.closest(".mobile-menu-group").classList.toggle("active");});
+  /* DESKTOP: hamburger opens mega-menu */
+  if(hamburger && megaMenu){
+    hamburger.addEventListener("click", function(e){
+      if(window.innerWidth <= 768) return;
+      e.stopPropagation();
+      megaMenu.classList.toggle("active");
+      hamburger.classList.toggle("active");
+    });
+    megaMenu.addEventListener("click", function(e){
+      if(window.innerWidth <= 768) return;
+      e.stopPropagation();
+    });
+    document.addEventListener("click", function(){
+      if(window.innerWidth <= 768) return;
+      closeMega();
+    });
+  }
 
-  var ft=document.querySelector(".findus-toggle");
-  var fm=document.querySelector(".findus-submenu");
-  if(ft)ft.addEventListener("click",function(e){e.preventDefault();if(fm)fm.classList.toggle("active");});
+  /* MOBILE: hamburger opens side menu */
+  if(hamburger && mobileMenu){
+    hamburger.addEventListener("click", function(e){
+      if(window.innerWidth > 768) return;
+      e.stopPropagation();
+      mobileMenu.classList.contains("active") ? closeMobile() : openMobile();
+    });
+    mobileMenu.addEventListener("click", function(e){ e.stopPropagation(); });
+  }
 
-  window.addEventListener("resize",function(){closeMega();closeMobileMenu();});
+  if(mobileOverlay) mobileOverlay.addEventListener("click", closeMobile);
+  if(closeBtn)      closeBtn.addEventListener("click", closeMobile);
+
+  /* MOBILE: brands submenu toggle */
+  var brandsToggle = document.querySelector(".mobile-menu-group .combo-toggle");
+  if(brandsToggle) brandsToggle.addEventListener("click", function(){
+    this.closest(".mobile-menu-group").classList.toggle("active");
+  });
+
+  /* MOBILE: find us toggle */
+  var findusToggle = document.querySelector(".findus-toggle");
+  var findusMenu   = document.querySelector(".findus-submenu");
+  if(findusToggle) findusToggle.addEventListener("click", function(e){
+    e.preventDefault();
+    if(findusMenu) findusMenu.classList.toggle("active");
+  });
+
+  window.addEventListener("resize", function(){ closeMega(); closeMobile(); });
+})();
+
 })();
 </script>
 </body>
