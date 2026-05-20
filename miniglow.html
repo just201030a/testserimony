@@ -1208,22 +1208,6 @@ document.addEventListener("DOMContentLoaded",function(){
   });
 
 });
-        btn.classList.add("active");
-        if(priceBox) priceBox.textContent = btn.dataset.price+" BD";
-      });
-    });
-  });
-
-  /* 100% ORIGINAL label */
-  document.querySelectorAll(".mini-info").forEach(function(info){
-    if(info.querySelector(".original-product")) return;
-    var orig=document.createElement("p");
-    orig.className="original-product";
-    orig.textContent="100% ORIGINAL PRODUCT";
-    var name=info.querySelector(".mini-name");
-    if(name)name.insertAdjacentElement("afterend",orig);
-  });
-});
 </script>
 
 
