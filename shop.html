@@ -765,37 +765,6 @@ var P = {
   }
 };
 
-
-/* ============================= */
-/* BUILD INSTAGRAM ORDER LINK    */
-/* ============================= */
-function buildOrderLink(product, selectedShade, btn){
-  if(!btn) return;
-
-  var shade = selectedShade || "";
-  // if no shade passed, try to get active one
-  if(!shade){
-    var activeShade = document.querySelector("#product-detail-content .shade-btn.active, #product-detail-content .combo-option.active, #product-detail-content .selected-text");
-    if(activeShade) shade = activeShade.textContent.trim();
-  }
-
-  var msg = "مرحبا 🌟\n\n";
-  msg += "أبي أطلب:\n";
-  msg += "━━━━━━━━━━━━━━━\n";
-  msg += "🛍 " + product.name.trim() + "\n";
-  if(product.brand) msg += "✨ " + product.brand + "\n";
-  if(shade && shade !== "SELECT SHADE") msg += "🎨 " + shade + "\n";
-  // clean price from <br> tags
-  var cleanPrice = product.price.replace(/<[^>]+>/gi,"").trim();
-  msg += "💰 " + cleanPrice + "\n";
-  msg += "━━━━━━━━━━━━━━━\n";
-
-  var encoded = encodeURIComponent(msg);
-  btn.href = "https://ig.me/m/glow.bysunkissed?text=" + encoded;
-  btn.target = "_blank";
-  btn.onclick = null;
-}
-
 /* ============================= */
 /* FILTER                        */
 /* ============================= */
@@ -862,10 +831,6 @@ function showProduct(id){
   window.scrollTo({top:0,behavior:"smooth"});
   history.pushState({product:id},"","?product="+id);
 
-  /* Build initial order link */
-  var oBtn2=document.getElementById("dob");
-  if(oBtn2) buildOrderLink(p, null, oBtn2);
-
   var i1=document.getElementById("di1"),i2=document.getElementById("di2");
   if(i1&&i2){
     i1.addEventListener("mouseenter",function(){i1.style.opacity="0";i2.style.opacity="1";});
@@ -887,7 +852,6 @@ function showProduct(id){
         box.classList.remove("active");
         stEl.textContent="AVAILABLE";stEl.className="stock-status in";
         oBtn.style.opacity="1";oBtn.style.pointerEvents="auto";
-        buildOrderLink(p, opt.textContent, oBtn);
       });
     });
     document.addEventListener("click",function(e){if(!box.contains(e.target))box.classList.remove("active");});
