@@ -7,6 +7,170 @@
 <title>glowbysunkissed</title>
 <link rel="stylesheet" href="TitlePage1.css">
 <link rel="stylesheet" href="miniglow.css">
+<style>
+/* ===== CART ICON ===== */
+
+
+/* ===== CART DRAWER ===== */
+.cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:3500;}
+.cart-overlay.open{display:block;}
+.cart-drawer{position:fixed;right:-420px;top:0;width:380px;max-width:92vw;height:100vh;background:#fff;z-index:4000;display:flex;flex-direction:column;transition:right 0.35s ease;box-shadow:-4px 0 24px rgba(0,0,0,0.1);}
+.cart-drawer.open{right:0;}
+.cart-header-bar{display:flex;justify-content:space-between;align-items:center;padding:22px 20px;border-bottom:1px solid #e8e2dc;}
+.cart-title{font-family:Arial,sans-serif;font-size:11px;letter-spacing:5px;}
+.cart-close{background:none;border:none;font-size:24px;cursor:pointer;color:#000;line-height:1;padding:0;}
+.cart-items{flex:1;overflow-y:auto;padding:12px 20px;}
+.cart-empty{font-family:Arial,sans-serif;font-size:10px;letter-spacing:3px;color:#aaa;text-align:center;margin-top:60px;}
+.cart-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid #f5f0ec;}
+.cart-item-img{width:56px;height:66px;object-fit:cover;flex-shrink:0;background:#f5f0ec;}
+.cart-item-info{flex:1;min-width:0;}
+.cart-item-name{font-family:Arial,sans-serif;font-size:10px;letter-spacing:2px;margin:0 0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cart-item-sub{font-family:Arial,sans-serif;font-size:9px;letter-spacing:1px;color:#888;margin:0 0 5px;}
+.cart-item-price{font-family:Arial,sans-serif;font-size:10px;letter-spacing:2px;margin:0;}
+.cart-item-remove{background:none;border:none;cursor:pointer;font-size:18px;color:#ccc;align-self:flex-start;padding:0;line-height:1;}
+.cart-item-remove:hover{color:#000;}
+.cart-footer-inner{padding:18px 20px;border-top:1px solid #e8e2dc;}
+.cart-total-row{display:flex;justify-content:space-between;font-family:Arial,sans-serif;font-size:11px;letter-spacing:3px;margin-bottom:14px;}
+
+
+
+/* ===== MINI BUTTONS ===== */
+.mini-btn-row{display:flex;gap:8px;margin-top:10px;}
+.mini-buy-btn{flex:1;padding:12px;background:#000;color:#fff;border:none;font-family:Arial,sans-serif;font-size:9px;letter-spacing:3px;cursor:pointer;transition:opacity .2s;}
+.mini-buy-btn:hover{opacity:.75;}
+.mini-add-btn{flex:1;padding:12px;background:#fff;color:#000;border:1px solid #000;font-family:Arial,sans-serif;font-size:9px;letter-spacing:3px;cursor:pointer;transition:background .2s,color .2s;}
+.mini-add-btn:hover{background:#000;color:#fff;}
+.mini-added{font-family:Arial,sans-serif;font-size:9px;letter-spacing:3px;color:#5a7a5a;text-align:center;height:14px;margin-top:4px;opacity:0;transition:opacity .3s;}
+.mini-added.show{opacity:1;}
+/* ===== MOBILE HEADER ===== */
+
+
+@media(max-width:768px){
+  /* Header */
+  .fenty-header{padding:10px 0;}
+  .fenty-header h1{font-size:16px;letter-spacing:4px;}
+  
+
+  /* Cart drawer — full screen on mobile */
+  .cart-drawer{
+    width:100vw;
+    max-width:100vw;
+    right:-100vw;
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+  }
+  .cart-drawer.open{right:0;}
+
+  /* Cart items scrollable in middle */
+  .cart-items{
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  /* Footer always at bottom, visible */
+  #cartFooter{
+    position:sticky;
+    bottom:0;
+    background:#fff;
+    box-shadow:0 -2px 12px rgba(0,0,0,0.08);
+  }
+  .cart-footer-inner{
+    padding:16px;
+  }
+  .cart-total-row{
+    font-size:13px;
+    letter-spacing:2px;
+    margin-bottom:12px;
+  }
+  
+  
+
+  /* Miniglow buttons */
+  .mini-buy-btn,.mini-add-btn{
+    font-size:11px;letter-spacing:2px;
+    padding:14px 8px;min-height:48px;
+  }
+
+  /* Shop buttons */
+  .btn-add-cart,.btn-buy-now{
+    font-size:11px;letter-spacing:2px;
+    padding:15px;min-height:50px;
+  }
+
+  .combo-box{width:100%;}
+  .combo-toggle{padding:15px 16px;font-size:12px;}
+  .combo-option{padding:14px 16px;font-size:12px;}
+}
+
+
+
+/* ===== CART DRAWER FIX ===== */
+.cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:3500;}
+.cart-overlay.open{display:block;}
+.cart-drawer{
+  position:fixed;
+  right:-100%;
+  top:0;
+  width:380px;
+  max-width:92vw;
+  height:100vh;
+  background:#fff;
+  z-index:4000;
+  display:flex;
+  flex-direction:column;
+  transition:right 0.35s ease;
+  box-shadow:-4px 0 24px rgba(0,0,0,0.1);
+  visibility:hidden;
+}
+.cart-drawer.open{
+  right:0;
+  visibility:visible;
+}
+#cartFooter{display:none;}
+#cartFooter[style*="block"]{display:block !important;}
+
+@media(max-width:768px){
+  .fenty-header{padding:10px 0;}
+  .fenty-header h1{font-size:16px;letter-spacing:4px;}
+  
+  .cart-drawer{width:100vw;max-width:100vw;}
+  #cartFooter[style*="block"]{
+    position:sticky;
+    bottom:0;
+    background:#fff;
+    box-shadow:0 -2px 12px rgba(0,0,0,0.08);
+  }
+  
+  
+  .cart-total-row{font-size:13px;letter-spacing:2px;margin-bottom:12px;}
+  .mini-buy-btn,.mini-add-btn{font-size:11px;letter-spacing:2px;padding:14px 8px;min-height:48px;}
+  .btn-add-cart,.btn-buy-now{font-size:11px;letter-spacing:2px;padding:15px;min-height:50px;}
+  .combo-box{width:100%;}
+  .combo-toggle{padding:15px 16px;font-size:12px;}
+  .combo-option{padding:14px 16px;font-size:12px;}
+}
+
+
+/* ===== CART ICON POSITION FIX ===== */
+.fenty-header{position:relative;}
+
+.cart-icon svg{display:block;flex-shrink:0;}
+
+@media(max-width:768px){
+  
+}
+
+.fenty-header{position:relative;}
+.cart-icon{position:absolute;right:24px;top:50%;transform:translateY(-50%);cursor:pointer;display:flex;align-items:center;gap:6px;z-index:3000;}
+.cart-icon svg{display:block;}
+.cart-count{font-family:Arial,sans-serif;font-size:10px;color:#000;}
+.cart-send-btn{width:100%;padding:14px;background:#000;color:#fff;border:none;font-family:Arial,sans-serif;font-size:9px;letter-spacing:3px;cursor:pointer;margin-bottom:8px;transition:opacity .2s;}
+.cart-clear-btn{width:100%;padding:10px;background:none;color:#888;border:1px solid #ccc;font-family:Arial,sans-serif;font-size:8px;letter-spacing:3px;cursor:pointer;display:block !important;}
+@media(max-width:768px){
+  .cart-send-btn{font-size:9px;letter-spacing:2px;padding:15px;min-height:50px;}
+  .cart-clear-btn{font-size:8px;padding:12px;min-height:44px;display:block !important;}
+}
+</style>
 </head>
 
 <body>
@@ -28,9 +192,6 @@
 </div>
 
 <header class="fenty-header">
-<a href="ourstory" class="about-header">OUR STORY</a>
-
-
 <!-- MOBILE OVERLAY -->
 <div class="mobile-overlay" id="mobileOverlay"></div>
 
@@ -99,8 +260,32 @@
 <h1>
 <a href="index" class="logo-link">GLOWBYSUNKISSED</a>
 </h1>
+<div class="cart-icon" id="cartIcon" onclick="openCart()" style="cursor:pointer;">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.5">
+<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+<line x1="3" y1="6" x2="21" y2="6"/>
+<path d="M16 10a4 4 0 01-8 0"/>
+</svg>
+<span class="cart-count" id="cartCount">0</span>
+</div>
 
 </header>
+
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+<div class="cart-header-bar">
+<span class="cart-title">YOUR BAG</span>
+<button class="cart-close" onclick="closeCart()">&times;</button>
+</div>
+<div class="cart-items" id="cartItems"><p class="cart-empty">Your bag is empty</p></div>
+<div id="cartFooter" style="display:none">
+<div class="cart-footer-inner">
+<div class="cart-total-row"><span>TOTAL</span><span id="cartTotal">BD 0</span></div>
+<button class="cart-send-btn" onclick="sendOrder()">SEND ORDER ON WHATSAPP</button>
+<button class="cart-clear-btn" onclick="clearCart()">CLEAR BAG</button>
+</div>
+</div>
+</div>
 
 <!-- MEGA MENU -->
 <div class="mega-menu luxury-menu">
@@ -190,11 +375,7 @@
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -224,11 +405,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -258,11 +435,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -291,11 +464,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -324,11 +493,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -357,11 +522,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -391,11 +552,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -424,11 +581,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -457,11 +610,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -490,11 +639,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -523,11 +668,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -556,11 +697,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -589,11 +726,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -622,11 +755,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -658,11 +787,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -691,11 +816,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -724,11 +845,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -758,11 +875,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -792,11 +905,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -826,11 +935,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -879,11 +984,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -913,11 +1014,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -949,11 +1046,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -983,11 +1076,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -1017,11 +1106,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -1063,11 +1148,7 @@ target="_blank">
 <div class="order-row">
 <span class="selected-price">SELECT SIZE</span>
 
-<a href="#"
-class="order-btn"
-target="_blank">
-<span>ORDER ON INSTAGRAM</span>
-</a>
+<div class="mini-btn-row"><button class="mini-buy-btn" onclick="miniBuyNow(this)">BUY NOW</button><button class="mini-add-btn" onclick="miniAddToCart(this)">ADD TO CART</button></div><p class="mini-added"></p>
 </div>
 
 </div>
@@ -1121,14 +1202,15 @@ target="_blank">
 
 
 <script>
-/* ===== ANNOUNCEMENT BAR ===== */
+/* ============================= */
+/* ANNOUNCEMENT BAR              */
+/* ============================= */
 (function(){
   var sl=document.getElementById("announcementSlider");
   var items=document.querySelectorAll(".announcement-item");
-  var nx=document.getElementById("announceNext");
-  var pv=document.getElementById("announcePrev");
+  var nx=document.getElementById("announceNext"),pv=document.getElementById("announcePrev");
   var idx=0,timer=null;
-  function upd(){if(sl)sl.style.transform="translateX(-"+(idx*100)+"%)";}
+  function upd(){if(sl)sl.style.transform="translateX(-"+(idx*100)+"%)"}
   function start(){timer=setInterval(function(){idx=(idx+1)%items.length;upd();},4000);}
   function stop(){clearInterval(timer);}
   if(nx)nx.addEventListener("click",function(){idx=(idx+1)%items.length;upd();});
@@ -1138,7 +1220,9 @@ target="_blank">
   start();
 })();
 
-/* ===== MENUS ===== */
+/* ============================= */
+/* MENUS                         */
+/* ============================= */
 (function(){
   var hamburger=document.querySelector(".menu-icon");
   var megaMenu=document.querySelector(".mega-menu");
@@ -1159,85 +1243,134 @@ target="_blank">
   }
   if(mobileOverlay)mobileOverlay.addEventListener("click",closeMobile);
   if(closeBtn)closeBtn.addEventListener("click",closeMobile);
-  var comboToggle=document.querySelector(".mobile-menu-group .combo-toggle");
-  if(comboToggle)comboToggle.addEventListener("click",function(){this.closest(".mobile-menu-group").classList.toggle("active");});
-  var findusToggle=document.querySelector(".findus-toggle");
-  var findusMenu=document.querySelector(".findus-submenu");
-  if(findusToggle)findusToggle.addEventListener("click",function(e){e.preventDefault();if(findusMenu)findusMenu.classList.toggle("active");});
+  var bt=document.querySelector(".mobile-menu-group .combo-toggle");
+  if(bt)bt.addEventListener("click",function(){this.closest(".mobile-menu-group").classList.toggle("active");});
+  var ft=document.querySelector(".findus-toggle"),fm=document.querySelector(".findus-submenu");
+  if(ft)ft.addEventListener("click",function(e){e.preventDefault();if(fm)fm.classList.toggle("active");});
   window.addEventListener("resize",function(){closeMega();closeMobile();});
 })();
 
-/* ===== MINIGLOW SIZE BUTTONS — FIXED ===== */
+/* ============================= */
+/* CART                          */
+/* ============================= */
+var cart=[];
+
+function getNum(s){return parseFloat((s||"").replace(/<[^>]+>/gi,"").replace(/[^0-9.]/g,""))||0;}
+
+function buildWA(items){
+  var url="https://wa.me/97334043024?text=Hi%20Glow%21%0A%0AI%27d%20like%20to%20order%3A%0A%0A",total=0;
+  items.forEach(function(item,i){
+    url+=encodeURIComponent((i+1)+". "+item.name+"\n");
+    if(item.shade)url+=encodeURIComponent("   Shade: "+item.shade+"\n");
+    url+=encodeURIComponent("   Size: "+item.size+"\n");
+    url+=encodeURIComponent("   Price: "+item.price+"\n");
+    url+="%0A";
+    total+=item.priceNum;
+  });
+  url+=encodeURIComponent("Total: BD "+total.toFixed(1)+"\n");
+  return url;
+}
+
+function getCardItem(btn){
+  var card=btn.closest(".mini-card");
+  var nameEl=card.querySelector(".mini-name");
+  var shadeEl=card.querySelector(".shade-btn.active");
+  var sizeEl=card.querySelector(".size-btn.active");
+  var imgEl=card.querySelector(".mini-images img");
+  if(!sizeEl)return null;
+  return {
+    name:    nameEl?nameEl.textContent.trim():"",
+    shade:   shadeEl?shadeEl.textContent.trim():"",
+    size:    sizeEl.textContent.trim(),
+    price:   sizeEl.dataset.price+" BD",
+    priceNum:getNum(sizeEl.dataset.price),
+    img:     imgEl?imgEl.src:""
+  };
+}
+
+function miniBuyNow(btn){
+  var item=getCardItem(btn);
+  if(!item)return;
+  window.open(buildWA([item]),"_blank");
+}
+
+function miniAddToCart(btn){
+  var item=getCardItem(btn);
+  if(!item)return;
+  cart.push(item);
+  renderCart();
+  var msg=btn.closest(".mini-btn-row").nextElementSibling;
+  if(msg&&msg.classList.contains("mini-added")){
+    msg.textContent="ADDED TO CART";
+    msg.classList.add("show");
+    setTimeout(function(){msg.classList.remove("show");},1600);
+  }
+  setTimeout(openCart,500);
+}
+
+function renderCart(){
+  var el=document.getElementById("cartItems");
+  var footer=document.getElementById("cartFooter");
+  var count=document.getElementById("cartCount");
+  var totalEl=document.getElementById("cartTotal");
+  if(count)count.textContent=cart.length;
+  if(!cart.length){
+    if(el)el.innerHTML='<p class="cart-empty">Your bag is empty</p>';
+    if(footer)footer.style.display="none";
+    return;
+  }
+  if(footer)footer.style.display="block";
+  var total=0,html="";
+  cart.forEach(function(item,i){
+    total+=item.priceNum;
+    html+='<div class="cart-item">';
+    if(item.img)html+='<img class="cart-item-img" src="'+item.img+'">';
+    html+='<div class="cart-item-info">';
+    html+='<p class="cart-item-name">'+item.name+'</p>';
+    var sub=(item.shade?item.shade+" — ":"")+item.size;
+    html+='<p class="cart-item-sub">'+sub+'</p>';
+    html+='<p class="cart-item-price">'+item.price+'</p>';
+    html+='</div>';
+    html+='<button class="cart-item-remove" onclick="removeFromCart('+i+')">&times;</button>';
+    html+='</div>';
+  });
+  if(el)el.innerHTML=html;
+  if(totalEl)totalEl.textContent="BD "+total.toFixed(1);
+}
+
+function removeFromCart(i){cart.splice(i,1);renderCart();}
+function clearCart(){cart=[];renderCart();}
+function sendOrder(){if(cart.length)window.open(buildWA(cart),"_blank");}
+function openCart(){document.getElementById("cartDrawer").classList.add("open");document.getElementById("cartOverlay").classList.add("open");document.body.classList.add("menu-open");}
+function closeCart(){document.getElementById("cartDrawer").classList.remove("open");document.getElementById("cartOverlay").classList.remove("open");document.body.classList.remove("menu-open");}
+
+/* ============================= */
+/* SHADE + SIZE BUTTONS          */
+/* ============================= */
 document.addEventListener("DOMContentLoaded",function(){
-
   document.querySelectorAll(".mini-card").forEach(function(card){
+    var shadeBtns=Array.from(card.querySelectorAll(".shade-btn"));
+    var sizeBtns=Array.from(card.querySelectorAll(".size-btn"));
+    var priceBox=card.querySelector(".selected-price");
 
-    var shadeBtns = Array.from(card.querySelectorAll(".shade-btn"));
-    var sizeBtns  = Array.from(card.querySelectorAll(".size-btn"));
-    var priceBox  = card.querySelector(".selected-price");
-
-    /* SHADE BUTTONS — scoped to THIS card only */
     shadeBtns.forEach(function(btn){
       btn.addEventListener("click",function(e){
         e.stopImmediatePropagation();
         shadeBtns.forEach(function(b){b.classList.remove("active");});
         btn.classList.add("active");
-        buildMiniOrderLink(card);
       });
     });
 
-    /* SIZE BUTTONS — scoped to THIS card only */
     sizeBtns.forEach(function(btn){
       btn.addEventListener("click",function(e){
         e.stopImmediatePropagation();
         sizeBtns.forEach(function(b){b.classList.remove("active");});
         btn.classList.add("active");
-        if(priceBox) priceBox.textContent = btn.dataset.price+" BD";
-        buildMiniOrderLink(card);
+        if(priceBox)priceBox.textContent=btn.dataset.price+" BD";
       });
     });
-
   });
-
-  /* 100% ORIGINAL label */
-  document.querySelectorAll(".mini-info").forEach(function(info){
-    if(info.querySelector(".original-product")) return;
-    var orig=document.createElement("p");
-    orig.className="original-product";
-    orig.textContent="100% ORIGINAL PRODUCT";
-    var nm=info.querySelector(".mini-name");
-    if(nm)nm.insertAdjacentElement("afterend",orig);
-  });
-
 });
-
-/* ============================= */
-/* MINIGLOW WHATSAPP ORDER LINK  */
-/* ============================= */
-function buildMiniOrderLink(card){
-  var nameEl   = card.querySelector(".mini-name");
-  var shadeEl  = card.querySelector(".shade-btn.active");
-  var sizeEl   = card.querySelector(".size-btn.active");
-  var orderBtn = card.querySelector(".order-btn");
-  if(!orderBtn) return;
-
-  var name  = nameEl  ? nameEl.textContent.trim()  : "";
-  var shade = shadeEl ? shadeEl.textContent.trim()  : "";
-  var size  = sizeEl  ? sizeEl.textContent.trim()   : "";
-  var price = sizeEl  ? sizeEl.dataset.price+" BD"  : "";
-
-  if(!size){ orderBtn.href="#"; return; }
-
-  var msg = "Hi! I\'d like to order:\n\n";
-  msg += "Product: " + name  + "\n";
-  if(shade) msg += "Shade: " + shade + "\n";
-  msg += "Size: "    + size  + "\n";
-  msg += "Price: "   + price + "\n";
-
-  orderBtn.href   = "https://wa.me/97334043024?text=" + encodeURIComponent(msg);
-  orderBtn.target = "_blank";
-}
-
 </script>
 
 
