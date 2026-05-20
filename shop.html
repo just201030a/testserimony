@@ -111,6 +111,101 @@
 .stock-status{font-family:Arial,sans-serif;font-size:10px;letter-spacing:3px;margin-top:4px;display:block;}
 .stock-status.in{color:#5a7a5a;}
 .stock-status.out{color:#c44;}
+
+/* ===== CART ICON ===== */
+.cart-icon{
+  position:absolute;right:20px;top:50%;transform:translateY(-50%);
+  cursor:pointer;display:flex;align-items:center;gap:5px;z-index:3000;
+}
+.cart-icon svg{display:block;}
+.cart-count{
+  font-family:Arial,sans-serif;font-size:9px;letter-spacing:1px;
+  background:#000;color:#fff;border-radius:50%;
+  width:16px;height:16px;display:flex;align-items:center;justify-content:center;
+}
+/* ===== CART DRAWER ===== */
+.cart-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.4);z-index:3500;
+}
+.cart-overlay.open{display:block;}
+.cart-drawer{
+  position:fixed;right:-420px;top:0;width:380px;max-width:92vw;
+  height:100vh;background:#fff;z-index:4000;
+  display:flex;flex-direction:column;
+  transition:right 0.35s ease;
+  box-shadow:-4px 0 24px rgba(0,0,0,0.1);
+}
+.cart-drawer.open{right:0;}
+.cart-header-bar{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:22px 20px;border-bottom:1px solid #e8e2dc;
+}
+.cart-title{font-family:Arial,sans-serif;font-size:11px;letter-spacing:5px;}
+.cart-close{background:none;border:none;font-size:24px;cursor:pointer;color:#000;line-height:1;padding:0;}
+.cart-items{flex:1;overflow-y:auto;padding:12px 20px;}
+.cart-empty{
+  font-family:Arial,sans-serif;font-size:10px;letter-spacing:3px;
+  color:#aaa;text-align:center;margin-top:60px;
+}
+.cart-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid #f5f0ec;}
+.cart-item-img{width:56px;height:66px;object-fit:cover;flex-shrink:0;background:#f5f0ec;}
+.cart-item-info{flex:1;min-width:0;}
+.cart-item-name{
+  font-family:Arial,sans-serif;font-size:10px;letter-spacing:2px;
+  margin:0 0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.cart-item-sub{font-family:Arial,sans-serif;font-size:9px;letter-spacing:1px;color:#888;margin:0 0 5px;}
+.cart-item-price{font-family:Arial,sans-serif;font-size:10px;letter-spacing:2px;margin:0;}
+.cart-item-remove{
+  background:none;border:none;cursor:pointer;
+  font-size:18px;color:#ccc;align-self:flex-start;padding:0;line-height:1;flex-shrink:0;
+}
+.cart-item-remove:hover{color:#000;}
+.cart-footer{padding:18px 20px;border-top:1px solid #e8e2dc;}
+.cart-total-row{
+  display:flex;justify-content:space-between;
+  font-family:Arial,sans-serif;font-size:11px;letter-spacing:3px;
+  margin-bottom:14px;
+}
+.cart-send-btn{
+  width:100%;padding:14px;background:#000;color:#fff;border:none;
+  font-family:Arial,sans-serif;font-size:10px;letter-spacing:4px;
+  cursor:pointer;margin-bottom:8px;transition:opacity .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.cart-send-btn:hover{opacity:.75;}
+.cart-clear-btn{
+  width:100%;padding:10px;background:none;color:#aaa;
+  border:1px solid #e8e2dc;font-family:Arial,sans-serif;
+  font-size:9px;letter-spacing:3px;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+/* ===== PRODUCT BUTTONS ===== */
+.product-btns{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+.btn-add-cart{
+  width:100%;padding:13px;background:#fff;color:#000;
+  border:1px solid #000;font-family:Arial,sans-serif;
+  font-size:10px;letter-spacing:4px;cursor:pointer;
+  transition:background .2s,color .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-add-cart:hover{background:#000;color:#fff;}
+.btn-buy-now{
+  width:100%;padding:13px;background:#000;color:#fff;border:none;
+  font-family:Arial,sans-serif;font-size:10px;letter-spacing:4px;
+  cursor:pointer;transition:opacity .2s;text-decoration:none;
+  text-align:center;display:block;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-buy-now:hover{opacity:.75;}
+.added-msg{
+  font-family:Arial,sans-serif;font-size:9px;letter-spacing:3px;
+  color:#5a7a5a;text-align:center;height:16px;margin-top:4px;
+  opacity:0;transition:opacity .3s;
+}
+.added-msg.show{opacity:1;}
+
 </style>
 </head>
 <body>
@@ -128,7 +223,6 @@
 </div>
 
 <header class="fenty-header">
-<a href="ourstory" class="about-header">OUR STORY</a>
 <div class="mobile-overlay" id="mobileOverlay"></div>
 <div class="mobile-menu" id="mobileMenu">
 <div class="mobile-menu-header">
@@ -172,7 +266,33 @@
 </div>
 <div class="menu-icon" id="menuBtn"><span></span><span></span><span></span></div>
 <h1><a href="index" class="logo-link">GLOWBYSUNKISSED</a></h1>
+<div class="cart-icon" id="cartIcon" onclick="openCart()">
+<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.5">
+<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+<line x1="3" y1="6" x2="21" y2="6"/>
+<path d="M16 10a4 4 0 01-8 0"/>
+</svg>
+<span class="cart-count" id="cartCount">0</span>
+</div>
 </header>
+
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+<div class="cart-header-bar">
+<span class="cart-title">YOUR BAG</span>
+<button class="cart-close" onclick="closeCart()">&times;</button>
+</div>
+<div class="cart-items" id="cartItems">
+<p class="cart-empty">Your bag is empty</p>
+</div>
+<div id="cartFooter" style="display:none">
+<div class="cart-footer">
+<div class="cart-total-row"><span>TOTAL</span><span id="cartTotal">BD 0</span></div>
+<button class="cart-send-btn" onclick="sendOrder()">SEND ORDER ON WHATSAPP</button>
+<button class="cart-clear-btn" onclick="clearCart()">CLEAR BAG</button>
+</div>
+</div>
+</div>
 
 <!-- MEGA MENU -->
 <div class="mega-menu luxury-menu">
@@ -794,26 +914,117 @@ function doFilter(e,filter){
 /* PRODUCT DETAIL                */
 /* ============================= */
 
-function buildOrderLink(product, shade){
-  var btn = document.getElementById("dob");
-  if(!btn) return;
-  if(!shade){
-    var sel = document.querySelector("#product-detail-content .selected-text");
-    if(sel) shade = sel.textContent.trim();
-    if(shade === "SELECT SHADE") shade = "";
+/* ============================= */
+/* CART SYSTEM                   */
+/* ============================= */
+var cart = [];
+var _curProduct = null;
+
+var _origShow = showProduct;
+showProduct = function(id){
+  _origShow(id);
+  _curProduct = P[id] || null;
+};
+
+function getShade(){
+  var sel = document.querySelector("#product-detail-content .selected-text");
+  var s = sel ? sel.textContent.trim() : "";
+  return s === "SELECT SHADE" ? "" : s;
+}
+
+function getNum(str){
+  return parseFloat((str||"").replace(/<[^>]+>/gi,"").replace(/[^0-9.]/g,""))||0;
+}
+
+function buildWA(items){
+  var url = "https://wa.me/97334043024?text=Hi%20Glow%21%0A%0AI%27d%20like%20to%20order%3A%0A%0A";
+  var total = 0;
+  items.forEach(function(item,i){
+    url += encodeURIComponent((i+1)+". "+item.name+"\n");
+    if(item.brand) url += encodeURIComponent("   Brand: "+item.brand+"\n");
+    if(item.shade) url += encodeURIComponent("   Shade: "+item.shade+"\n");
+    url += encodeURIComponent("   Price: "+item.price+"\n");
+    url += "%0A";
+    total += item.priceNum;
+  });
+  url += encodeURIComponent("Total: BD "+total.toFixed(1)+"\n");
+  return url;
+}
+
+function addToCart(){
+  if(!_curProduct) return;
+  var img = document.getElementById("di1");
+  cart.push({
+    name: _curProduct.name.trim(),
+    brand: _curProduct.brand||"",
+    shade: getShade(),
+    price: (_curProduct.price||"").replace(/<[^>]+>/gi,"").trim(),
+    priceNum: getNum(_curProduct.price),
+    img: img ? img.src : ""
+  });
+  renderCart();
+  var m = document.getElementById("addedMsg");
+  if(m){ m.classList.add("show"); setTimeout(function(){m.classList.remove("show");},1600); }
+  setTimeout(openCart,500);
+}
+
+function buyNow(){
+  if(!_curProduct) return;
+  window.open(buildWA([{
+    name: _curProduct.name.trim(),
+    brand: _curProduct.brand||"",
+    shade: getShade(),
+    price: (_curProduct.price||"").replace(/<[^>]+>/gi,"").trim(),
+    priceNum: getNum(_curProduct.price)
+  }]), "_blank");
+}
+
+function sendOrder(){
+  if(!cart.length) return;
+  window.open(buildWA(cart),"_blank");
+}
+
+function removeFromCart(i){cart.splice(i,1);renderCart();}
+function clearCart(){cart=[];renderCart();}
+
+function renderCart(){
+  var el=document.getElementById("cartItems");
+  var footer=document.getElementById("cartFooter");
+  var count=document.getElementById("cartCount");
+  var totalEl=document.getElementById("cartTotal");
+  if(count) count.textContent=cart.length;
+  if(!cart.length){
+    el.innerHTML='<p class="cart-empty">Your bag is empty</p>';
+    if(footer) footer.style.display="none";
+    return;
   }
-  var name  = (product.name  || "").trim();
-  var brand = (product.brand || "").trim();
-  var price = (product.price || "").replace(/<[^>]+>/gi,"").trim();
-  var msg = "Hi! I'd like to order:\n\n";
-  msg += "Product: " + name  + "\n";
-  msg += "Brand: "   + brand + "\n";
-  if(shade && shade !== "SELECT SHADE"){
-    msg += "Shade: " + shade + "\n";
-  }
-  msg += "Price: "   + price + "\n";
-  btn.href = "https://wa.me/97334043024?text=" + encodeURIComponent(msg);
-  btn.target = "_blank";
+  if(footer) footer.style.display="block";
+  var total=0,html="";
+  cart.forEach(function(item,i){
+    total+=item.priceNum;
+    html+='<div class="cart-item">';
+    if(item.img) html+='<img class="cart-item-img" src="'+item.img+'">';
+    html+='<div class="cart-item-info">';
+    html+='<p class="cart-item-name">'+item.name+'</p>';
+    html+='<p class="cart-item-sub">'+(item.brand+(item.shade?" — "+item.shade:""))+'</p>';
+    html+='<p class="cart-item-price">'+item.price+'</p>';
+    html+='</div>';
+    html+='<button class="cart-item-remove" onclick="removeFromCart('+i+')">&times;</button>';
+    html+='</div>';
+  });
+  el.innerHTML=html;
+  if(totalEl) totalEl.textContent="BD "+total.toFixed(1);
+}
+
+function openCart(){
+  document.getElementById("cartDrawer").classList.add("open");
+  document.getElementById("cartOverlay").classList.add("open");
+  document.body.classList.add("menu-open");
+}
+function closeCart(){
+  document.getElementById("cartDrawer").classList.remove("open");
+  document.getElementById("cartOverlay").classList.remove("open");
+  document.body.classList.remove("menu-open");
 }
 
 function showProduct(id){
@@ -845,7 +1056,7 @@ function showProduct(id){
     +'<h2 class="product-name">'+p.name+'</h2>'
     +'<p class="product-price">'+p.price+'</p>'
     +shHtml+optsHTML
-    +'<a href="#" class="add-to-bag" id="dob" target="_blank">ORDER ON WHATSAPP</a>'
+    +'<div class="product-btns">'+'<button class="btn-add-cart" onclick="addToCart()">ADD TO CART</button>'+'<a class="btn-buy-now" id="dob" href="#" onclick="buyNow();return false;">BUY NOW</a>'+'</div>'+'<p class="added-msg" id="addedMsg">ADDED TO CART ✓</p>'
     +'<p class="original-product">100% ORIGINAL PRODUCT</p>'
     +'</div></div></section></div></div></section>';
 
@@ -853,7 +1064,6 @@ function showProduct(id){
   dv.classList.add("visible");
   window.scrollTo({top:0,behavior:"smooth"});
   history.pushState({product:id},"","?product="+id);
-  buildOrderLink(p, null);
 
   var i1=document.getElementById("di1"),i2=document.getElementById("di2");
   if(i1&&i2){
@@ -876,7 +1086,6 @@ function showProduct(id){
         box.classList.remove("active");
         stEl.textContent="AVAILABLE";stEl.className="stock-status in";
         oBtn.style.opacity="1";oBtn.style.pointerEvents="auto";
-        buildOrderLink(p, opt.textContent);
       });
     });
     document.addEventListener("click",function(e){if(!box.contains(e.target))box.classList.remove("active");});
@@ -956,6 +1165,144 @@ window.addEventListener("popstate",function(e){if(!e.state||!e.state.product)hid
 
   window.addEventListener("resize",function(){closeMega();closeMobileMenu();});
 })();
+
+/* ============================= */
+/* CART SYSTEM                   */
+/* ============================= */
+var cart = [];
+var _curProduct = null;
+
+/* wrap showProduct to track current product */
+var _origShow = showProduct;
+showProduct = function(id){
+  _origShow(id);
+  _curProduct = P[id] || null;
+  /* update buy now link */
+  updateBuyNowLink();
+};
+
+/* also update buy now when shade changes */
+var _origComboClick = null; // handled inside showProduct init
+
+function getSelectedShade(){
+  var sel = document.querySelector("#product-detail-content .selected-text");
+  var s = sel ? sel.textContent.trim() : "";
+  return (s === "SELECT SHADE") ? "" : s;
+}
+
+function buildWAUrl(items){
+  var url = "https://wa.me/97334043024?text=Hi%20Glow%21%0A%0AI%27d%20like%20to%20order%3A%0A%0A";
+  var total = 0;
+  items.forEach(function(item, i){
+    url += encodeURIComponent((i+1)+". "+item.name+"\n");
+    if(item.brand) url += encodeURIComponent("   Brand: "+item.brand+"\n");
+    if(item.shade) url += encodeURIComponent("   Shade: "+item.shade+"\n");
+    url += encodeURIComponent("   Price: "+item.price+"\n");
+    url += "%0A";
+    total += item.priceNum;
+  });
+  url += encodeURIComponent("Total: BD "+total.toFixed(1)+"\n");
+  return url;
+}
+
+function getPriceNum(priceStr){
+  return parseFloat((priceStr||"").replace(/<[^>]+>/gi,"").replace(/[^0-9.]/g,"")) || 0;
+}
+
+function addToCart(){
+  if(!_curProduct) return;
+  var shade = getSelectedShade();
+  var img = document.getElementById("di1");
+  cart.push({
+    name: _curProduct.name.trim(),
+    brand: _curProduct.brand||"",
+    shade: shade,
+    price: (_curProduct.price||"").replace(/<[^>]+>/gi,"").trim(),
+    priceNum: getPriceNum(_curProduct.price),
+    img: img ? img.src : ""
+  });
+  renderCart();
+  var m = document.getElementById("addedMsg");
+  if(m){ m.classList.add("show"); setTimeout(function(){m.classList.remove("show");},1500); }
+  setTimeout(openCart, 400);
+}
+
+function buyNow(){
+  if(!_curProduct) return;
+  var shade = getSelectedShade();
+  var item = {
+    name: _curProduct.name.trim(),
+    brand: _curProduct.brand||"",
+    shade: shade,
+    price: (_curProduct.price||"").replace(/<[^>]+>/gi,"").trim(),
+    priceNum: getPriceNum(_curProduct.price)
+  };
+  window.open(buildWAUrl([item]), "_blank");
+}
+
+function updateBuyNowLink(){
+  var btn = document.getElementById("dob");
+  if(!btn || !_curProduct) return;
+  btn.href = "#";
+}
+
+function sendOrder(){
+  if(!cart.length) return;
+  window.open(buildWAUrl(cart), "_blank");
+}
+
+function removeFromCart(i){
+  cart.splice(i,1);
+  renderCart();
+}
+
+function clearCart(){
+  cart=[];
+  renderCart();
+}
+
+function renderCart(){
+  var el = document.getElementById("cartItems");
+  var footer = document.getElementById("cartFooter");
+  var count = document.getElementById("cartCount");
+  var totalEl = document.getElementById("cartTotal");
+  if(count) count.textContent = cart.length;
+  if(!cart.length){
+    el.innerHTML = '<p class="cart-empty">Your bag is empty</p>';
+    if(footer) footer.style.display = "none";
+    return;
+  }
+  if(footer) footer.style.display = "block";
+  var total=0, html="";
+  cart.forEach(function(item,i){
+    total += item.priceNum;
+    html += '<div class="cart-item">';
+    if(item.img) html += '<img class="cart-item-img" src="'+item.img+'">';
+    html += '<div class="cart-item-info">';
+    html += '<p class="cart-item-name">'+item.name+'</p>';
+    var sub = item.brand+(item.shade?" — "+item.shade:"");
+    html += '<p class="cart-item-sub">'+sub+'</p>';
+    html += '<p class="cart-item-price">'+item.price+'</p>';
+    html += '</div>';
+    html += '<button class="cart-item-remove" onclick="removeFromCart('+i+')">&times;</button>';
+    html += '</div>';
+  });
+  el.innerHTML = html;
+  if(totalEl) totalEl.textContent = "BD "+total.toFixed(1);
+}
+
+function openCart(){
+  document.getElementById("cartDrawer").classList.add("open");
+  document.getElementById("cartOverlay").classList.add("open");
+  document.body.classList.add("menu-open");
+}
+
+function closeCart(){
+  document.getElementById("cartDrawer").classList.remove("open");
+  document.getElementById("cartOverlay").classList.remove("open");
+  document.body.classList.remove("menu-open");
+}
+
 </script>
 </body>
 </html>
