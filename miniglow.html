@@ -1169,13 +1169,45 @@ target="_blank">
 
 /* ===== MINIGLOW SIZE BUTTONS — FIXED ===== */
 document.addEventListener("DOMContentLoaded",function(){
+
   document.querySelectorAll(".mini-card").forEach(function(card){
-    var sizeBtns = card.querySelectorAll(".size-btn");
-    var priceBox = card.querySelector(".selected-price");
+
+    var shadeBtns = Array.from(card.querySelectorAll(".shade-btn"));
+    var sizeBtns  = Array.from(card.querySelectorAll(".size-btn"));
+    var priceBox  = card.querySelector(".selected-price");
+
+    /* SHADE BUTTONS — scoped to THIS card only */
+    shadeBtns.forEach(function(btn){
+      btn.addEventListener("click",function(e){
+        e.stopImmediatePropagation();
+        shadeBtns.forEach(function(b){b.classList.remove("active");});
+        btn.classList.add("active");
+      });
+    });
+
+    /* SIZE BUTTONS — scoped to THIS card only */
     sizeBtns.forEach(function(btn){
       btn.addEventListener("click",function(e){
         e.stopImmediatePropagation();
         sizeBtns.forEach(function(b){b.classList.remove("active");});
+        btn.classList.add("active");
+        if(priceBox) priceBox.textContent = btn.dataset.price+" BD";
+      });
+    });
+
+  });
+
+  /* 100% ORIGINAL label */
+  document.querySelectorAll(".mini-info").forEach(function(info){
+    if(info.querySelector(".original-product")) return;
+    var orig=document.createElement("p");
+    orig.className="original-product";
+    orig.textContent="100% ORIGINAL PRODUCT";
+    var nm=info.querySelector(".mini-name");
+    if(nm)nm.insertAdjacentElement("afterend",orig);
+  });
+
+});
         btn.classList.add("active");
         if(priceBox) priceBox.textContent = btn.dataset.price+" BD";
       });

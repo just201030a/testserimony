@@ -1050,3 +1050,18 @@ opacity: 0.7;
     margin-bottom:12px;
   }
 }
+/* ===== MOBILE HEADER FIX ===== */
+@media (max-width:600px){
+.fenty-header{
+padding:10px 0;
+}
+.fenty-header h1{
+font-size:16px;
+letter-spacing:4px;
+}
+.menu-icon{
+left:10px;
+width:12px;
+height:8px;
+}
+}
