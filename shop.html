@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="iconn.png">
+<title>glowbysunkissed</title>
+<link rel="stylesheet" href="products.css">
+<link rel="stylesheet" href="insideproducts.css">
+<style>
+/* ===== FILTER BAR ===== */
+.filter-bar{
+  background:#fff;
+  border-bottom:1px solid #e8e2dc;
+  padding:0;
+  position:sticky;
+  top:0;
+  z-index:1900;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.filter-bar::-webkit-scrollbar{display:none;}
+.filter-inner{
+  display:flex;
+  align-items:stretch;
+  padding:0 4vw;
+  min-width:max-content;
+}
+.filter-btn{
+  display:inline-block;
+  padding:16px 18px;
+  background:none;
+  border:none;
+  border-bottom:2px solid transparent;
+  font-family:Arial,sans-serif;
+  font-size:10px;
+  letter-spacing:4px;
+  text-transform:uppercase;
+  cursor:pointer;
+  color:#999;
+  white-space:nowrap;
+  transition:color .2s,border-color .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.filter-btn:hover{color:#000;}
+.filter-btn.active{
+  color:#000;
+  border-bottom:2px solid #000;
+  font-weight:600;
+}
+.filter-sep{
+  display:inline-block;
+  width:1px;
+  background:#e0d9d3;
+  margin:10px 2px;
+  align-self:stretch;
+}
+
+/* ===== VIEWS ===== */
+#product-detail-view{display:none;}
+#product-detail-view.visible{display:block;}
+#shop-grid-view.hidden{display:none;}
+
+/* ===== BACK BTN ===== */
+.back-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:22px 4vw 0;
+  font-family:Arial,sans-serif;font-size:10px;letter-spacing:4px;
+  color:#000;cursor:pointer;background:none;border:none;text-transform:uppercase;
+  -webkit-tap-highlight-color:transparent;
+}
+.back-btn::before{content:"←";font-size:14px;}
+.back-btn:hover{opacity:.55;}
+
+/* ===== PRODUCT DETAIL EXTRAS ===== */
+.product-brand{
+  font-family:Arial,sans-serif;font-size:10px;letter-spacing:5px;color:#999;margin-bottom:4px;
+}
+.original-product{
+  font-family:Arial,sans-serif;font-size:9px;letter-spacing:3px;opacity:.55;
+  margin-top:8px;display:flex;align-items:center;gap:6px;
+}
+.original-product::before{content:"✓";}
+
+/* ===== COMBO BOX (SHADE SELECTOR) ===== */
+.combo-box{position:relative;width:260px;}
+@media(max-width:768px){.combo-box{width:100%;}}
+.combo-toggle{
+  display:flex;justify-content:space-between;align-items:center;
+  width:100%;padding:14px 18px;
+  border:1px solid #000;background:#fff;
+  font-family:Arial,sans-serif;font-size:11px;letter-spacing:3px;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.combo-menu{
+  display:none;position:absolute;top:100%;left:0;width:100%;
+  border:1px solid #000;border-top:none;background:#fff;
+  z-index:200;max-height:260px;overflow-y:auto;
+}
+.combo-box.active .combo-menu{display:block;}
+.combo-option{
+  display:block;width:100%;padding:12px 18px;
+  border:none;border-top:1px solid #eee;background:#fff;
+  font-family:Arial,sans-serif;font-size:11px;letter-spacing:2px;
+  text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.combo-option:hover{background:#f5f0ec;}
+.combo-option[data-stock="out"]{color:#bbb;pointer-events:none;text-decoration:line-through;}
+.stock-status{font-family:Arial,sans-serif;font-size:10px;letter-spacing:3px;margin-top:4px;display:block;}
+.stock-status.in{color:#5a7a5a;}
+.stock-status.out{color:#c44;}
+</style>
+</head>
+<body>
+
+<div class="announcement-bar">
+<button class="announce-btn" id="announcePrev">&#8249;</button>
+<div class="announcement-container">
+<div class="announcement-slider" id="announcementSlider">
+<span class="announcement-item">WELCOME GORGEOUS !</span>
+<span class="announcement-item">YOUR FAVORITE BRANDS ARE WAITING</span>
+<span class="announcement-item">KEEP GLOWING BEAUTIFUL</span>
+</div>
+</div>
+<button class="announce-btn" id="announceNext">&#8250;</button>
+</div>
+
+<header class="fenty-header">
+<a href="ourstory" class="about-header">OUR STORY</a>
+<div class="mobile-overlay" id="mobileOverlay"></div>
+<div class="mobile-menu" id="mobileMenu">
+<div class="mobile-menu-header">
+<span>MENU</span>
+<button class="mobile-close" id="closeMenuBtn">&times;</button>
+</div>
+<div class="mobile-menu-content">
+<a href="miniglow" class="mobile-menu-link">MINIGLOW !</a>
+<a href="shop" class="mobile-menu-link">SHOP ALL</a>
+<a href="#" class="mobile-menu-link" onclick="doFilter(event,'face')">FACE</a>
+<a href="#" class="mobile-menu-link" onclick="doFilter(event,'cheeks')">CHEEKS</a>
+<a href="#" class="mobile-menu-link" onclick="doFilter(event,'eyes')">EYES</a>
+<a href="#" class="mobile-menu-link" onclick="doFilter(event,'lips')">LIPS</a>
+<a href="#" class="mobile-menu-link" onclick="doFilter(event,'brush')">BRUSH</a>
+<div class="mobile-menu-group brands-combo">
+<button class="mobile-menu-link combo-toggle" type="button" id="mobileBrandsToggle">
+<span>BRANDS</span><span class="combo-icon">+</span>
+</button>
+<div class="mobile-submenu" id="mobileBrandsMenu">
+<a href="#" onclick="doFilter(event,'hudabeauty')">HUDABEAUTY</a>
+<a href="#" onclick="doFilter(event,'makeupbymario')">MAKEUPBYMARIO</a>
+<a href="#" onclick="doFilter(event,'fentybeauty')">FENTYBEAUTY</a>
+<a href="#" onclick="doFilter(event,'refy')">REFY</a>
+<a href="#" onclick="doFilter(event,'loca')">LOCA</a>
+<a href="#" onclick="doFilter(event,'kosas')">KOSAS</a>
+<a href="#" onclick="doFilter(event,'onesize')">ONESIZE</a>
+<a href="#" onclick="doFilter(event,'hauslabs')">HAUSLABS</a>
+<a href="#" onclick="doFilter(event,'saie')">SAIE</a>
+</div>
+</div>
+<div class="mobile-world-title"><strong>GLOWERS</strong> WORLD</div>
+<div class="mobile-world-links">
+<a href="#" class="mobile-menu-link findus-toggle">FIND US</a>
+<div class="findus-submenu">
+<a href="https://www.instagram.com/glow.bysunkissed">INSTAGRAM</a>
+<a href="https://www.tiktok.com/@sunkissedreview">TIKTOK</a>
+</div>
+<a href="ourstory">OUR STORY</a>
+</div>
+</div>
+</div>
+<div class="menu-icon" id="menuBtn"><span></span><span></span><span></span></div>
+<h1><a href="index" class="logo-link">GLOWBYSUNKISSED</a></h1>
+</header>
+
+<div class="mega-menu">
+<div class="mega-grid">
+<a href="#" class="mega-item" onclick="doFilter(event,'face')"><img src="headerpc/face.jpg" alt="FACE"><p>FACE</p></a>
+<a href="#" class="mega-item" onclick="doFilter(event,'cheeks')"><img src="headerpc/cheeks.jpg" alt="CHEEKS"><p>CHEEKS</p></a>
+<a href="#" class="mega-item" onclick="doFilter(event,'eyes')"><img src="headerpc/eyes.jpg" alt="EYES"><p>EYES</p></a>
+<a href="miniglow" class="mega-item"><img src="miniglow/miniglow.jpg" alt="MINIGLOW"><p>MINIGLOW !</p></a>
+<a href="#" class="mega-item" onclick="doFilter(event,'lips')"><img src="headerpc/lips.jpg" alt="LIPS"><p>LIPS</p></a>
+<a href="#" class="mega-item" onclick="doFilter(event,'brush')"><img src="headerpc/brush.jpg" alt="BRUSH"><p>BRUSH</p></a>
+</div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+<div class="filter-inner">
+<button class="filter-btn active" data-filter="all" onclick="doFilter(event,'all')">SHOP ALL</button>
+<span class="filter-sep"></span>
+<button class="filter-btn" data-filter="face" onclick="doFilter(event,'face')">FACE</button>
+<button class="filter-btn" data-filter="cheeks" onclick="doFilter(event,'cheeks')">CHEEKS</button>
+<button class="filter-btn" data-filter="eyes" onclick="doFilter(event,'eyes')">EYES</button>
+<button class="filter-btn" data-filter="lips" onclick="doFilter(event,'lips')">LIPS</button>
+<button class="filter-btn" data-filter="brush" onclick="doFilter(event,'brush')">BRUSH</button>
+<span class="filter-sep"></span>
+<button class="filter-btn" data-filter="hudabeauty" onclick="doFilter(event,'hudabeauty')">HUDA BEAUTY</button>
+<button class="filter-btn" data-filter="makeupbymario" onclick="doFilter(event,'makeupbymario')">MAKEUP BY MARIO</button>
+<button class="filter-btn" data-filter="fentybeauty" onclick="doFilter(event,'fentybeauty')">FENTY BEAUTY</button>
+<button class="filter-btn" data-filter="refy" onclick="doFilter(event,'refy')">REFY</button>
+<button class="filter-btn" data-filter="loca" onclick="doFilter(event,'loca')">LOCA</button>
+<button class="filter-btn" data-filter="kosas" onclick="doFilter(event,'kosas')">KOSAS</button>
+<button class="filter-btn" data-filter="onesize" onclick="doFilter(event,'onesize')">ONE/SIZE</button>
+<button class="filter-btn" data-filter="hauslabs" onclick="doFilter(event,'hauslabs')">HAUS LABS</button>
+<button class="filter-btn" data-filter="saie" onclick="doFilter(event,'saie')">SAIE</button>
+</div>
+</div>
+
+<!-- SHOP GRID VIEW -->
+<div id="shop-grid-view">
+<section class="categories-section">
+<p class="sub-title" id="grid-subtitle">EVERYTHING YOU LOVE, GORGEOUS</p>
+<div class="categories-wrapper">
+<div class="categories-slider" id="categoriesSlider">
+
+<!-- PRODUCT 1 -->
+<div class="category-card" data-cat="face cheeks lips" data-brand="hudabeauty">
+<div class="category-image-box out">
+<img src="HUDA BEAUTY PRODUCTS/Product 1.jpg" class="img-main">
+<img src="HUDA BEAUTY PRODUCTS/Product 2of1.jpg" class="img-hover">
+<div class="stock-badge">OUT OF STOCK</div>
+<a href="#" class="view-product-btn" onclick="showProduct('habibtilip');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">HABIBTI LIP &amp; CHEEK </span>
+</div>
+
+<!-- PRODUCT 2 -->
+<div class="category-card" data-cat="face" data-brand="hudabeauty">
+<div class="category-image-box">
+<img src="HUDA BEAUTY PRODUCTS/product 2.jpg" class="img-main">
+<img src="HUDA BEAUTY PRODUCTS/Product 2of2.jpg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('easybakepressedpowder');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">EASY BAKE PRESSED POWDER</span>
+</div>
+
+<!-- PRODUCT 3 -->
+<div class="category-card" data-cat="face brush" data-brand="hudabeauty">
+<div class="category-image-box">
+<img src="HUDA BEAUTY PRODUCTS/Product 3.jpg" class="img-main">
+<img src="HUDA BEAUTY PRODUCTS/product 2of3.jpg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('marshmallowpuffandsponge');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">MARSHMALLOW PUFF AND SPONGE </span>
+</div>
+
+<!-- PRODUCT 4 -->
+<div class="category-card" data-cat="face" data-brand="hudabeauty">
+<div class="category-image-box">
+<img src="HUDA BEAUTY PRODUCTS/PRODUCT 4.jpg" class="img-main">
+<img src="HUDA BEAUTY PRODUCTS/product 2of4.jpg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('easyblurfoundation');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">EASY BLUR FOUNDATION </span>
+</div>
+
+<!-- PRODUCT 5 -->
+<div class="category-card" data-cat="face" data-brand="hudabeauty">
+<div class="category-image-box">
+<img src="HUDA BEAUTY PRODUCTS/PRODUCT 5.jpg" class="img-main">
+<img src="HUDA BEAUTY PRODUCTS/PRODUCT 2of5.jpg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('fauxfilterconcealer');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">FAUX FILTER CONCEALER</span>
+</div>
+
+<!-- PRODUCT 6 -->
+<div class="category-card" data-cat="face" data-brand="hudabeauty">
+<div class="category-image-box">
+<img src="HUDA BEAUTY PRODUCTS/PRODUCT 6.jpg" class="img-main">
+<img src="HUDA BEAUTY PRODUCTS/PRODUCT 2of6.jpg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('fauxfiltercorrector');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">FAUX FILTER CORRECTOR</span>
+</div>
+
+<!-- PRODUCT 7 -->
+<div class="category-card" data-cat="eyes" data-brand="hudabeauty">
+<div class="category-image-box">
+<img src="HUDA BEAUTY PRODUCTS/PRODUCT 7.jpg" class="img-main">
+<img src="HUDA BEAUTY PRODUCTS/PRODUCT 2of7.jpg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('legitlashes');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">LEGIT LASHES DOUBLE ENDED VOLUMIZING AND LENGTHENING MASCARA</span>
+</div>
+
+<!-- PRODUCT 8 -->
+<div class="category-card" data-cat="lips" data-brand="hudabeauty">
+<div class="category-image-box">
+<img src="HUDA BEAUTY PRODUCTS/PRODUCT 8.jpg" class="img-main">
+<img src="HUDA BEAUTY PRODUCTS/PRODUCT 2of8.jpg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('fauxfillergloss');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">FAUX FILLER EXTRA SHINE LIP GLOSS</span>
+</div>
+
+<!-- PRODUCT 9 -->
+<div class="category-card" data-cat="face" data-brand="hudabeauty">
+<div class="category-image-box">
+<img src="HUDA BEAUTY PRODUCTS/PRODUCT 9.jpg" class="img-main">
+<img src="HUDA BEAUTY PRODUCTS/product 2of9.jpg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('easybakesettingspray');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">EASY BAKE SETTING SPRAY</span>
+</div>
+
+<!-- PRODUCT 10 -->
+<div class="category-card" data-cat="face" data-brand="hudabeauty">
+<div class="category-image-box">
+<img src="HUDA BEAUTY PRODUCTS/PRODUCT 10.jpg" class="img-main">
+<img src="HUDA BEAUTY PRODUCTS/PRODUCT 2of10.jpg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('easyblurprimer');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">EASY BLUR PRIMER</span>
+</div>
+
+<!-- PRODUCT 11 -->
+<div class="category-card" data-cat="cheeks" data-brand="hudabeauty">
+<div class="category-image-box">
+<img src="HUDA BEAUTY PRODUCTS/PRODUCT 11.jpg" class="img-main">
+<img src="HUDA BEAUTY PRODUCTS/PRODUCT 2of11.jpg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('blushfilterliquidblush');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">BLUSH FILTER LIQUID BLUSH</span>
+</div>
+
+<!-- PRODUCT 12 -->
+<div class="category-card" data-cat="brush" data-brand="hudabeauty">
+<div class="category-image-box">
+<img src="HUDA BEAUTY PRODUCTS/DIFFUSING CHEEK BRUSH 1.jpeg" class="img-main">
+<img src="HUDA BEAUTY PRODUCTS/DIFFUSING CHEEK BRUSH 2.jpeg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('diffusingcheekbrush');return false;">VIEW THE PRODUCT</a>
+<div class="product-badge"><span>NEW</span></div>
+</div>
+<span class="category-label">DIFFUSING CHEEK BRUSH</span>
+</div>
+
+<!-- PRODUCT 13 -->
+<div class="category-card" data-cat="cheeks" data-brand="hudabeauty">
+<div class="category-image-box">
+<img src="HUDA BEAUTY PRODUCTS/blushfilterblurring.jpeg" class="img-main">
+<img src="HUDA BEAUTY PRODUCTS/blushfilterblurring2.jpeg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('blushfilterblurring');return false;">VIEW THE PRODUCT</a>
+<div class="product-badge"><span>NEW</span></div>
+</div>
+<span class="category-label">BLUSH FILTER BLURRING BLUSHLIGHTERS PALETTE</span>
+</div>
+
+<!-- PRODUCT 14 (Makeup By Mario) -->
+<div class="category-card" data-cat="eyes" data-brand="makeupbymario">
+<div class="category-image-box out">
+<img src="MakeUpByMario/Product 1.jpg" class="img-main">
+<img src="MakeUpByMario/Product 2of1.jpg" class="img-hover">
+<div class="stock-badge">OUT OF STOCK</div>
+<a href="#" class="view-product-btn" onclick="showProduct('mastermascara');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">MASTER MASCARA</span>
+</div>
+
+<!-- PRODUCT 15 (REFY) -->
+<div class="category-card" data-cat="eyes" data-brand="refy">
+<div class="category-image-box out">
+<img src="REFY/product 1.jpeg" class="img-main">
+<img src="REFY/Product 2of1.jpg" class="img-hover">
+<div class="stock-badge">OUT OF STOCK</div>
+<a href="#" class="view-product-btn" onclick="showProduct('remastered12hr');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">REMASTERED 12HR HOLD BROW SCULPT</span>
+</div>
+
+<!-- PRODUCT 16 -->
+<div class="category-card" data-cat="lips" data-brand="refy">
+<div class="category-image-box">
+<img src="REFY/Product 2.jpeg" class="img-main">
+<img src="REFY/product 2of2.jpg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('lipgloss');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">LIP GLOSS</span>
+</div>
+
+<!-- PRODUCT 17 -->
+<div class="category-card" data-cat="brush" data-brand="refy">
+<div class="category-image-box">
+<img src="REFY/product 3.jpg" class="img-main">
+<img src="REFY/product 2of3.jpg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('complexionbrush');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">COMPLEXION BRUSH</span>
+</div>
+
+<!-- PRODUCT 18 -->
+<div class="category-card" data-cat="brush" data-brand="refy">
+<div class="category-image-box out">
+<img src="REFY/product 4.jpg" class="img-main">
+<img src="REFY/product 2of4.jpg" class="img-hover">
+<div class="stock-badge">OUT OF STOCK</div>
+<a href="#" class="view-product-btn" onclick="showProduct('duobrush');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">DUO BRUSH</span>
+</div>
+
+<!-- PRODUCT 19 -->
+<div class="category-card" data-cat="cheeks" data-brand="refy">
+<div class="category-image-box">
+<img src="REFY/product 5.jpg" class="img-main">
+<img src="REFY/product 2of5.jpg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('creambronzer');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">CREAM BRONZER</span>
+</div>
+
+<!-- PRODUCT 20 -->
+<div class="category-card" data-cat="cheeks" data-brand="refy">
+<div class="category-image-box">
+<img src="REFY/product 6.jpg" class="img-main">
+<img src="REFY/product 2of6.jpg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('creamblush');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">CREAM BLUSH</span>
+</div>
+
+<!-- PRODUCT 21 -->
+<div class="category-card" data-cat="eyes" data-brand="refy">
+<div class="category-image-box out">
+<img src="REFY/product 7.jpg" class="img-main">
+<img src="REFY/product 2of7.jpg" class="img-hover">
+<div class="stock-badge">OUT OF STOCK</div>
+<a href="#" class="view-product-btn" onclick="showProduct('lashsculpt');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">LASH SCULPT</span>
+</div>
+
+<!-- PRODUCT 22 -->
+<div class="category-card" data-cat="face cheeks" data-brand="refy">
+<div class="category-image-box out">
+<img src="REFY/product 8.jpg" class="img-main">
+<img src="REFY/product 2of8.jpg" class="img-hover">
+<div class="stock-badge">OUT OF STOCK</div>
+<a href="#" class="view-product-btn" onclick="showProduct('glosshighlighter');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">GLOSS HIGHLIGHTER</span>
+</div>
+
+<!-- PRODUCT 23 (FENTY) -->
+<div class="category-card" data-cat="face" data-brand="fentybeauty">
+<div class="category-image-box">
+<img src="FentyBeauty/Product1.jpg" class="img-main">
+<img src="FentyBeauty/PRODUCT 2of1.jpg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('youmistsettingspray');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">YOU MIST - SETTING SPRAY </span>
+</div>
+
+<!-- PRODUCT 24 (LOCA) -->
+<div class="category-card" data-cat="lips" data-brand="loca">
+<div class="category-image-box">
+<img src="LOCA/product 1.jpg" class="img-main">
+<img src="LOCA/product 2of1.jpg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('lipsmoothie');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">LIP SMOOTHIE</span>
+</div>
+
+<!-- PRODUCT 25 (ONE/SIZE) -->
+<div class="category-card" data-cat="face" data-brand="onesize">
+<div class="category-image-box out">
+<img src="OneSize/Product 1.jpg" class="img-main">
+<img src="OneSize/product 2of1.jpg" class="img-hover">
+<div class="stock-badge">OUT OF STOCK</div>
+<a href="#" class="view-product-btn" onclick="showProduct('powdermeltsettingspray');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">POWDER MELT SETTING SPRAY</span>
+</div>
+
+<!-- PRODUCT 26 -->
+<div class="category-card" data-cat="face" data-brand="onesize">
+<div class="category-image-box">
+<img src="OneSize/product 2.jpg" class="img-main">
+<img src="OneSize/product 2of2.jpg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('onesizeultrablurringpowder');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">ONE/SIZE ULTRA BLURRING POWDER</span>
+</div>
+
+<!-- PRODUCT 27 (HAUS LABS) -->
+<div class="category-card" data-cat="cheeks face" data-brand="hauslabs">
+<div class="category-image-box out">
+<img src="HausLabs/product 1.jpg" class="img-main">
+<img src="HausLabs/product 2of1.jpg" class="img-hover">
+<div class="stock-badge">OUT OF STOCK</div>
+<a href="#" class="view-product-btn" onclick="showProduct('balmhighlighterstick');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">BALM HIGHLIGHTER STICK</span>
+</div>
+
+<!-- PRODUCT 28 -->
+<div class="category-card" data-cat="lips" data-brand="hauslabs">
+<div class="category-image-box">
+<img src="HausLabs/product 2.jpg" class="img-main">
+<img src="HausLabs/product 2of2.jpg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('phdlipoil');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">PHD LIP OIL</span>
+</div>
+
+<!-- PRODUCT 29 (SAIE) -->
+<div class="category-card" data-cat="cheeks face" data-brand="saie">
+<div class="category-image-box out">
+<img src="Saie/product 1.jpg" class="img-main">
+<img src="Saie/product 2of1.jpg" class="img-hover">
+<div class="stock-badge">OUT OF STOCK</div>
+<a href="#" class="view-product-btn" onclick="showProduct('blushglowset');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">BLUSH &amp; GLOW SET</span>
+</div>
+
+<!-- PRODUCT 30 (KOSAS) -->
+<div class="category-card" data-cat="face" data-brand="kosas">
+<div class="category-image-box">
+<img src="kosas/product 1.jpg" class="img-main">
+<img src="kosas/product 2of1.jpg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('cloudsetloosepowder');return false;">VIEW THE PRODUCT</a>
+</div>
+<span class="category-label">CLOUD SET LOOSE POWDER</span>
+</div>
+
+<!-- PRODUCT 31 — NEW -->
+<div class="category-card" data-cat="face" data-brand="hudabeauty">
+<div class="category-image-box">
+<img src="HUDA BEAUTY PRODUCTS/easybakeloosingbake1.jpeg" class="img-main">
+<img src="HUDA BEAUTY PRODUCTS/easybakeloosingbake2.jpeg" class="img-hover">
+<a href="#" class="view-product-btn" onclick="showProduct('easybakeloosebakingsettingpowder');return false;">VIEW THE PRODUCT</a>
+<div class="product-badge"><span>NEW </span></div>
+</div>
+<span class="category-label">EASY BAKE LOOSE BAKING &amp; SETTING POWDER</span>
+</div>
+
+</div>
+</div>
+</section>
+</div>
+
+<!-- PRODUCT DETAIL VIEW -->
+<div id="product-detail-view">
+<button class="back-btn" id="backBtn">BACK</button>
+<div id="product-detail-content"></div>
+</div>
+
+<footer class="footer-findus">
+<h1>FIND US</h1>
+<div class="social-icons">
+<a href="https://www.instagram.com/glow.bysunkissed?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="><i class="fa-brands fa-instagram"></i></a>
+<a href="https://www.tiktok.com/@sunkissedreview?_r=1&_t=ZS-94e5HnaleOu"><i class="fa-brands fa-tiktok"></i></a>
+</div>
+</footer>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<script>
+/* ============================= */
+/* PRODUCTS DATA — 100% ACCURATE */
+/* ============================= */
+var P = {
+  habibtilip:{
+    brand:"HUDA BEAUTY",name:"HABIBTI LIP & CHEEK",price:"BD 19",
+    shadeTitle:"INCLUDES 3 FULL SIZE PRODUCTS",
+    img1:"HUDA BEAUTY PRODUCTS/Product 1.jpg",img2:"HUDA BEAUTY PRODUCTS/Product 2of1.jpg",
+    opts:[{l:"LIQUID BLUSH \u2013 STRAWBERRY CREAM",s:"out"},{l:"LIQUID BLUSH (BLONZER) \u2013 LATTE",s:"out"},{l:"FAUX FILLER LIP OIL \u2013 JUICY PINK LADY",s:"out"}]
+  },
+  easybakepressedpowder:{
+    brand:"HUDA BEAUTY",name:"EASY BAKE PRESSED POWDER ",price:"BD 16.5",
+    img1:"HUDA BEAUTY PRODUCTS/product 2.jpg",img2:"HUDA BEAUTY PRODUCTS/Product 2of2.jpg",
+    opts:[{l:"BANANA BREAD",s:"in"},{l:"PEACH PIE",s:"in"},{l:"POUND CAKE",s:"in"}]
+  },
+  marshmallowpuffandsponge:{
+    brand:"HUDA BEAUTY",name:"MARSHMALLOW PUFF AND SPONGE ",price:"BD 6",
+    img1:"HUDA BEAUTY PRODUCTS/Product 3.jpg",img2:"HUDA BEAUTY PRODUCTS/product 2of3.jpg",
+    opts:[]
+  },
+  easyblurfoundation:{
+    brand:"HUDA BEAUTY",name:"EASY BLUR FOUNDATION ",price:"BD 16.5",
+    img1:"HUDA BEAUTY PRODUCTS/PRODUCT 4.jpg",img2:"HUDA BEAUTY PRODUCTS/product 2of4.jpg",
+    opts:[{l:"AMARETTI 310G",s:"in"},{l:"CHEESECAKE 250G",s:"in"},{l:"TOASTED COCONUT 240N",s:"out"}]
+  },
+  fauxfilterconcealer:{
+    brand:"HUDA BEAUTY",name:"FAUX FILTER CONCEALER ",price:"BD 12.5",
+    img1:"HUDA BEAUTY PRODUCTS/PRODUCT 5.jpg",img2:"HUDA BEAUTY PRODUCTS/PRODUCT 2of5.jpg",
+    opts:[{l:"AMARETTI 310G",s:"in"},{l:"COOKIE DOUGH 4.3N",s:"in"},{l:"TOASTED ALMOND 5.3G",s:"out"}]
+  },
+  fauxfiltercorrector:{
+    brand:"HUDA BEAUTY",name:"FAUX FILTER CORRECTOR",price:"BD 12.5",
+    img1:"HUDA BEAUTY PRODUCTS/PRODUCT 6.jpg",img2:"HUDA BEAUTY PRODUCTS/PRODUCT 2of6.jpg",
+    opts:[{l:"PEACH LIGHT",s:"in"},{l:"PINK PAMELLO",s:"in"}]
+  },
+  legitlashes:{
+    brand:"HUDA BEAUTY",name:"LEGIT LASHES DOUBLE ENDED VOLUMIZING AND LENGTHENING MASCARA ",price:"MINI SIZE<br>BD 4.5",
+    img1:"HUDA BEAUTY PRODUCTS/PRODUCT 7.jpg",img2:"HUDA BEAUTY PRODUCTS/PRODUCT 2of7.jpg",
+    opts:[]
+  },
+  fauxfillergloss:{
+    brand:"HUDA BEAUTY",name:"FAUX FILLER EXTRA SHINE LIP GLOSS",price:"BD 9",
+    img1:"HUDA BEAUTY PRODUCTS/PRODUCT 8.jpg",img2:"HUDA BEAUTY PRODUCTS/PRODUCT 2of8.jpg",
+    opts:[{l:"FOXY",s:"in"},{l:"POSH",s:"in"},{l:"GLASSY",s:"in"},{l:"SUGAR BABY",s:"in"},{l:"BOMBSHELL",s:"in"}]
+  },
+  easybakesettingspray:{
+    brand:"HUDA BEAUTY",name:"EASY BAKE SETTING SPRAY",price:"BD 11",
+    img1:"HUDA BEAUTY PRODUCTS/PRODUCT 9.jpg",img2:"HUDA BEAUTY PRODUCTS/product 2of9.jpg",
+    opts:[]
+  },
+  easyblurprimer:{
+    brand:"HUDA BEAUTY",name:"EASY BLUR PRIMER",price:"BD 10.5 ",
+    img1:"HUDA BEAUTY PRODUCTS/PRODUCT 10.jpg",img2:"HUDA BEAUTY PRODUCTS/PRODUCT 2of10.jpg",
+    opts:[{l:"TINTED",s:"in"},{l:"ORIGINAL",s:"in"},{l:"SUGAR BABY",s:"in"},{l:"BOMBSHELL",s:"in"}]
+  },
+  blushfilterliquidblush:{
+    brand:"HUDA BEAUTY",name:"BLUSH FILTER LIQUID BLUSH",price:"BD 9.5 ",
+    img1:"HUDA BEAUTY PRODUCTS/PRODUCT 11.jpg",img2:"HUDA BEAUTY PRODUCTS/PRODUCT 2of11.jpg",
+    opts:[{l:"PEACH SORBET",s:"in"},{l:"BUBBLEGUM",s:"in"},{l:"LATTE",s:"in"},{l:"SUGAR BABY",s:"in"},{l:"COCO LOCO",s:"in"},{l:"STRAWBERRY CREAM",s:"in"},{l:"INTENSE GUAVA",s:"in"}]
+  },
+  diffusingcheekbrush:{
+    brand:"HUDA BEAUTY",name:"DIFFUSING CHEEK BRUSH",price:"9.5 BD",
+    img1:"HUDA BEAUTY PRODUCTS/DIFFUSING CHEEK BRUSH 1.jpeg",img2:"HUDA BEAUTY PRODUCTS/DIFFUSING CHEEK BRUSH 2.jpeg",
+    opts:[]
+  },
+  blushfilterblurring:{
+    brand:"HUDA BEAUTY",name:"BLUSH FILTER BLURRING BLUSHLIGHTERS PALETTE",price:"BD 16.5 ",
+    img1:"HUDA BEAUTY PRODUCTS/blushfilterblurring.jpeg",img2:"HUDA BEAUTY PRODUCTS/blushfilterblurring2.jpeg",
+    opts:[{l:"STRAWBERRY LATTE",s:"in"},{l:"SUGAR BABY",s:"in"},{l:"BOMBSHELL",s:"in"}]
+  },
+  easybakeloosebakingsettingpowder:{
+    brand:"HUDA BEAUTY",name:"EASY BAKE LOOSE BAKING & SETTING POWDER ",price:"BD 16",
+    img1:"HUDA BEAUTY PRODUCTS/easybakeloosingbake1.jpeg",img2:"HUDA BEAUTY PRODUCTS/easybakeloosingbake2.jpeg",
+    opts:[{l:"BANANA BREAD",s:"in"},{l:"PEACH PIE",s:"in"},{l:"POUND CAKE",s:"in"}]
+  },
+  mastermascara:{
+    brand:"MAKEUP BY MARIO",name:"MASTER MASCARA ",price:"SOLD OUT",
+    img1:"MakeUpByMario/Product 1.jpg",img2:"MakeUpByMario/Product 2of1.jpg",
+    opts:[]
+  },
+  remastered12hr:{
+    brand:"REFY",name:"REMASTERED 12HR HOLD BROW SCULPT  ",price:"SOLD OUT",
+    img1:"REFY/product 1.jpeg",img2:"REFY/Product 2of1.jpg",
+    opts:[]
+  },
+  lipgloss:{
+    brand:"REFY",name:"LIP GLOSS",price:"BD 9.3",
+    img1:"REFY/Product 2.jpeg",img2:"REFY/product 2of2.jpg",
+    opts:[{l:"LIQUID BLUSH (BLONZER) \u2013 LATTE",s:"in"},{l:"CLEAR",s:"in"}]
+  },
+  complexionbrush:{
+    brand:"REFY",name:"COMPLEXION BRUSH",price:"BD 10",
+    img1:"REFY/product 3.jpg",img2:"REFY/product 2of3.jpg",
+    opts:[]
+  },
+  duobrush:{
+    brand:"REFY",name:"DUO BRUSH",price:"SOLD OUT ",
+    img1:"REFY/product 4.jpg",img2:"REFY/product 2of4.jpg",
+    opts:[]
+  },
+  creambronzer:{
+    brand:"REFY",name:"CREAM BRONZER",price:"BD 10",
+    img1:"REFY/product 5.jpg",img2:"REFY/product 2of5.jpg",
+    opts:[{l:"LIQUID BLUSH (BLONZER) \u2013 LATTE",s:"in"},{l:"TAN",s:"in"}]
+  },
+  creamblush:{
+    brand:"REFY",name:"CREAM BLUSH",price:"BD 10",
+    img1:"REFY/product 6.jpg",img2:"REFY/product 2of6.jpg",
+    opts:[{l:"MALAYA",s:"in"},{l:"CHERRY",s:"out"}]
+  },
+  lashsculpt:{
+    brand:"REFY",name:"LASH SCULPT",price:"BD 8.8",
+    img1:"REFY/product 7.jpg",img2:"REFY/product 2of7.jpg",
+    opts:[{l:"BLACK",s:"out"},{l:"BROWN",s:"out"}]
+  },
+  glosshighlighter:{
+    brand:"REFY",name:"GLOSS HIGHLIGHTER",price:"SOLD OUT",
+    img1:"REFY/product 8.jpg",img2:"REFY/product 2of8.jpg",
+    opts:[]
+  },
+  youmistsettingspray:{
+    brand:"FENTY BEAUTY",name:"YOU MIST - SETTING SPRAY ",price:"MINI SIZE<BR>BD 6.5",
+    img1:"FentyBeauty/Product1.jpg",img2:"FentyBeauty/PRODUCT 2of1.jpg",
+    opts:[]
+  },
+  lipsmoothie:{
+    brand:"LOCA",name:"LIP SMOOTHIE",price:"BD 5",
+    img1:"LOCA/product 1.jpg",img2:"LOCA/product 2of1.jpg",
+    opts:[{l:"MAUVE FIZZ",s:"in"},{l:"PINK SUNDAE",s:"in"},{l:"VANILLA SWIRL",s:"in"}]
+  },
+  powdermeltsettingspray:{
+    brand:"ONE/SIZE",name:"POWDER MELT SETTING SPRAY ",price:"SOLD OUT",
+    img1:"OneSize/Product 1.jpg",img2:"OneSize/product 2of1.jpg",
+    opts:[]
+  },
+  onesizeultrablurringpowder:{
+    brand:"ONE/SIZE",name:"ONE/SIZE ULTRA BLURRING POWDER",price:"FULL SIZE<BR>BD 16",
+    img1:"OneSize/product 2.jpg",img2:"OneSize/product 2of2.jpg",
+    opts:[{l:"TRANSLUCENT",s:"in"},{l:"ULTRA PINK",s:"in"}]
+  },
+  balmhighlighterstick:{
+    brand:"HAUS LABS",name:"BALM HIGHLIGHTER STICK",price:"BD 12",
+    img1:"HausLabs/product 1.jpg",img2:"HausLabs/product 2of1.jpg",
+    opts:[{l:"GLASSY OPAL",s:"out"}]
+  },
+  phdlipoil:{
+    brand:"HAUS LABS",name:"PHD LIP OIL",price:"BD 13",
+    img1:"HausLabs/product 2.jpg",img2:"HausLabs/product 2of2.jpg",
+    opts:[{l:"SECONDARY",s:"in"}]
+  },
+  cloudsetloosepowder:{
+    brand:"KOSAS",name:"CLOUD SET LOOSE POWDER",price:"BD 14.5",
+    img1:"kosas/product 1.jpg",img2:"kosas/product 2of1.jpg",
+    opts:[{l:"TRANSLUCENT BUTTERY",s:"in"},{l:"TRANSLUCENT CANDY",s:"in"}]
+  },
+  blushglowset:{
+    brand:"SAIE",name:"BLUSH & GLOW SET ",price:"SOLD OUT",
+    img1:"Saie/product 1.jpg",img2:"Saie/product 2of1.jpg",
+    opts:[]
+  }
+};
+
+/* ============================= */
+/* FILTER                        */
+/* ============================= */
+var subtitles={all:"EVERYTHING YOU LOVE, GORGEOUS",face:"FACE",cheeks:"CHEEKS",eyes:"EYES",lips:"LIPS",brush:"BRUSH",hudabeauty:"HUDA BEAUTY",makeupbymario:"MAKEUP BY MARIO",fentybeauty:"FENTY BEAUTY",refy:"REFY",loca:"LOCA",kosas:"KOSAS",onesize:"ONE/SIZE",hauslabs:"HAUS LABS",saie:"SAIE"};
+
+function doFilter(e,filter){
+  e.preventDefault();
+  hideDetail();
+  document.querySelectorAll(".filter-btn").forEach(function(b){b.classList.remove("active");});
+  document.querySelectorAll('[data-filter="'+filter+'"]').forEach(function(b){b.classList.add("active");});
+  var sub=document.getElementById("grid-subtitle");
+  if(sub)sub.textContent=subtitles[filter]||filter.toUpperCase();
+  document.querySelectorAll(".category-card").forEach(function(c){
+    if(filter==="all"){c.style.display="";}
+    else{
+      var cat=c.dataset.cat||"";
+      var brand=c.dataset.brand||"";
+      c.style.display=(cat.indexOf(filter)>-1||brand===filter)?"":"none";
+    }
+  });
+  closeMobileMenu();
+  var gv=document.getElementById("shop-grid-view");
+  if(gv)gv.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+/* ============================= */
+/* PRODUCT DETAIL                */
+/* ============================= */
+function showProduct(id){
+  var p=P[id]; if(!p)return;
+  var gv=document.getElementById("shop-grid-view");
+  var dv=document.getElementById("product-detail-view");
+  var ct=document.getElementById("product-detail-content");
+
+  var optsHTML="";
+  if(p.opts&&p.opts.length){
+    var first=null;
+    for(var i=0;i<p.opts.length;i++){if(p.opts[i].s==="in"){first=p.opts[i];break;}}
+    var defText=first?first.l:"SELECT SHADE";
+    var defStock=first?"in":"out";
+    var items=p.opts.map(function(o){return '<button class="combo-option" data-stock="'+o.s+'">'+o.l+'</button>';}).join("");
+    optsHTML='<div class="combo-box" id="dc"><button class="combo-toggle" type="button"><span class="selected-text">'+defText+'</span><span class="combo-icon">+</span></button><div class="combo-menu">'+items+'</div></div>'
+      +'<span class="stock-status '+defStock+'" id="dstock">'+(defStock==="in"?"AVAILABLE":"SOLD OUT")+'</span>';
+  }
+
+  var shHtml=p.shadeTitle?'<label class="shade-title">'+p.shadeTitle+'</label>':"";
+
+  ct.innerHTML='<section class="categories-section"><div class="categories-wrapper"><section class="product-page"><div class="product-container">'
+    +'<div class="product-images"><div class="product-main-image" id="dimgbox">'
+    +'<img src="'+p.img1+'" class="product-img-main" id="di1">'
+    +'<img src="'+p.img2+'" class="product-img-hover" id="di2">'
+    +'</div></div>'
+    +'<div class="product-info">'
+    +'<p class="product-brand">'+p.brand+'</p>'
+    +'<h2 class="product-name">'+p.name+'</h2>'
+    +'<p class="product-price">'+p.price+'</p>'
+    +shHtml+optsHTML
+    +'<a href="https://ig.me/m/glow.bysunkissed" class="add-to-bag" target="_blank" id="dob">ORDER ON INSTAGRAM</a>'
+    +'<p class="original-product">100% ORIGINAL PRODUCT</p>'
+    +'</div></div></section></div></div></section>';
+
+  gv.classList.add("hidden");
+  dv.classList.add("visible");
+  window.scrollTo({top:0,behavior:"smooth"});
+  history.pushState({product:id},"","?product="+id);
+
+  var i1=document.getElementById("di1"),i2=document.getElementById("di2");
+  if(i1&&i2){
+    i1.addEventListener("mouseenter",function(){i1.style.opacity="0";i2.style.opacity="1";});
+    i1.addEventListener("mouseleave",function(){i1.style.opacity="1";i2.style.opacity="0";});
+  }
+
+  var box=document.getElementById("dc");
+  if(box){
+    var tog=box.querySelector(".combo-toggle");
+    var opts=box.querySelectorAll(".combo-option");
+    var txt=box.querySelector(".selected-text");
+    var stEl=document.getElementById("dstock");
+    var oBtn=document.getElementById("dob");
+    tog.addEventListener("click",function(e){e.stopPropagation();box.classList.toggle("active");});
+    opts.forEach(function(opt){
+      if(opt.dataset.stock==="out")return;
+      opt.addEventListener("click",function(){
+        txt.textContent=opt.textContent;
+        box.classList.remove("active");
+        stEl.textContent="AVAILABLE";stEl.className="stock-status in";
+        oBtn.style.opacity="1";oBtn.style.pointerEvents="auto";
+      });
+    });
+    document.addEventListener("click",function(e){if(!box.contains(e.target))box.classList.remove("active");});
+  }
+}
+
+function hideDetail(){
+  var gv=document.getElementById("shop-grid-view");
+  var dv=document.getElementById("product-detail-view");
+  if(gv)gv.classList.remove("hidden");
+  if(dv)dv.classList.remove("visible");
+  history.pushState({},"","shop");
+}
+
+document.getElementById("backBtn").addEventListener("click",hideDetail);
+window.addEventListener("popstate",function(e){if(!e.state||!e.state.product)hideDetail();});
+
+/* URL params on load */
+(function(){
+  var params=new URLSearchParams(window.location.search);
+  var prod=params.get("product");
+  var filt=params.get("filter");
+  if(prod&&P[prod]){showProduct(prod);}
+  else if(filt){
+    var fe={preventDefault:function(){},target:null};
+    doFilter(fe,filt);
+  }
+})();
+
+/* ============================= */
+/* ANNOUNCEMENT BAR + MENUS      */
+/* ============================= */
+(function(){
+  var sl=document.getElementById("announcementSlider");
+  var items=document.querySelectorAll(".announcement-item");
+  var nx=document.getElementById("announceNext");
+  var pv=document.getElementById("announcePrev");
+  var idx=0,timer=null;
+  function upd(){if(sl)sl.style.transform="translateX(-"+(idx*100)+"%)";}
+  function start(){timer=setInterval(function(){idx=(idx+1)%items.length;upd();},4000);}
+  function stop(){clearInterval(timer);}
+  if(nx)nx.addEventListener("click",function(){idx=(idx+1)%items.length;upd();});
+  if(pv)pv.addEventListener("click",function(){idx=(idx-1+items.length)%items.length;upd();});
+  var bar=document.querySelector(".announcement-bar");
+  if(bar){bar.addEventListener("mouseenter",stop);bar.addEventListener("mouseleave",start);}
+  start();
+
+  var hamburger=document.querySelector(".menu-icon");
+  var megaMenu=document.querySelector(".mega-menu");
+  var mobileMenu=document.querySelector(".mobile-menu");
+  var mobileOverlay=document.querySelector(".mobile-overlay");
+  var closeBtn=document.getElementById("closeMenuBtn");
+
+  function closeMega(){if(megaMenu)megaMenu.classList.remove("active");if(hamburger&&window.innerWidth>768)hamburger.classList.remove("active");}
+  window.closeMobileMenu=function(){if(mobileMenu)mobileMenu.classList.remove("active");if(mobileOverlay)mobileOverlay.classList.remove("active");if(hamburger&&window.innerWidth<=768)hamburger.classList.remove("active");document.body.classList.remove("menu-open");}
+  function openMobile(){if(!mobileMenu||!mobileOverlay)return;mobileMenu.classList.add("active");mobileOverlay.classList.add("active");if(hamburger)hamburger.classList.add("active");document.body.classList.add("menu-open");}
+
+  if(hamburger&&megaMenu){
+    hamburger.addEventListener("click",function(e){if(window.innerWidth<=768)return;e.stopPropagation();megaMenu.classList.toggle("active");hamburger.classList.toggle("active");});
+    megaMenu.addEventListener("click",function(e){if(window.innerWidth<=768)return;e.stopPropagation();});
+    document.addEventListener("click",function(){if(window.innerWidth<=768)return;closeMega();});
+  }
+  if(hamburger&&mobileMenu){
+    hamburger.addEventListener("click",function(e){if(window.innerWidth>768)return;e.stopPropagation();mobileMenu.classList.contains("active")?closeMobileMenu():openMobile();});
+    mobileMenu.addEventListener("click",function(e){e.stopPropagation();});
+  }
+  if(mobileOverlay)mobileOverlay.addEventListener("click",closeMobileMenu);
+  if(closeBtn)closeBtn.addEventListener("click",closeMobileMenu);
+
+  var mbt=document.getElementById("mobileBrandsToggle");
+  var mbm=document.getElementById("mobileBrandsMenu");
+  if(mbt&&mbm)mbt.addEventListener("click",function(){mbt.closest(".mobile-menu-group").classList.toggle("active");});
+
+  var ft=document.querySelector(".findus-toggle");
+  var fm=document.querySelector(".findus-submenu");
+  if(ft)ft.addEventListener("click",function(e){e.preventDefault();if(fm)fm.classList.toggle("active");});
+
+  window.addEventListener("resize",function(){closeMega();closeMobileMenu();});
+})();
+</script>
+</body>
+</html>
