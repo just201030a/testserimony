@@ -6,6 +6,7 @@
 <link rel="icon" type="image/png" href="iconn.png">
 <title>glowbysunkissed</title>
 <link rel="stylesheet" href="TitlePage1.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 .fenty-header{position:relative;}
 .cart-icon{position:absolute;right:24px;top:50%;transform:translateY(-50%);cursor:pointer;display:flex;align-items:center;gap:6px;z-index:3000;}
@@ -102,36 +103,379 @@
   }
 }
 
+
+/* ===== COMING SOON — HYPE ===== */
+.coming-soon-card { cursor: default; }
+
+.coming-soon-card .brand-img-wrap img {
+  filter: brightness(0.55) saturate(0.4);
+  transition: filter 0.5s ease, transform 0.6s ease;
+}
+.coming-soon-card:hover .brand-img-wrap img {
+  filter: brightness(0.65) saturate(0.5);
+  transform: scale(1.03);
+}
+
+/* GLOW PULSE RING */
+.coming-soon-card .brand-img-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(232,180,180,0.22) 0%,
+    transparent 70%
+  );
+  z-index: 2;
+  animation: glowPulse 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes glowPulse {
+  0%,100% { opacity: 0.5; }
+  50%      { opacity: 1; }
+}
+
+/* BADGE */
+.coming-soon-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  pointer-events: none;
+  text-align: center;
+  width: 100%;
+}
+.coming-soon-badge .badge-soon {
+  display: inline-block;
+  background: linear-gradient(135deg, #e8c4c4, #f5e6e6, #deb8b8);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  letter-spacing: 6px;
+  font-weight: 700;
+  animation: goldShine 2.5s linear infinite;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 8px;
+}
+@keyframes goldShine {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+.coming-soon-badge .badge-line {
+  display: block;
+  width: 30px;
+  height: 1px;
+  background: rgba(220,170,170,0.7);
+  margin: 0 auto 8px;
+}
+.coming-soon-badge .badge-sub {
+  display: block;
+  font-family: Arial, sans-serif;
+  font-size: 8px;
+  letter-spacing: 4px;
+  color: rgba(255,255,255,0.55);
+  text-transform: uppercase;
+}
+
+/* BRAND NAME GOLD */
+.coming-soon-card .brand-name {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+  letter-spacing: 5px;
+}
+.coming-soon-card .brand-explore { display: none; }
+
+</style>
+<style>
+/* ============================================
+   INDEX REDESIGN — GLOWBYSUNKISSED
+   ============================================ */
+
+/* ---- HERO ---- */
+.hero-wrap {
+  position: relative;
+  width: 100%;
+  height: 92vh;
+  overflow: hidden;
+}
+.hero-wrap video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hero-veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.08) 0%,
+    rgba(0,0,0,0.35) 70%,
+    rgba(0,0,0,0.55) 100%
+  );
+}
+.hero-text {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #fff;
+  width: 90%;
+  max-width: 680px;
+  animation: fadeUp 1.1s ease both;
+}
+.hero-text h2 {
+  font-family: 'Georgia', serif;
+  font-size: clamp(28px, 5vw, 58px);
+  font-weight: 300;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  line-height: 1.2;
+}
+.hero-text p {
+  font-family: Arial, sans-serif;
+  font-size: clamp(9px, 1.3vw, 12px);
+  letter-spacing: 4px;
+  opacity: 0.85;
+  margin-bottom: 32px;
+}
+.hero-cta {
+  display: inline-block;
+  padding: 14px 42px;
+  border: 1px solid rgba(255,255,255,0.8);
+  color: #fff;
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+  letter-spacing: 5px;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background 0.3s, color 0.3s;
+  backdrop-filter: blur(4px);
+}
+.hero-cta:hover {
+  background: #fff;
+  color: #000;
+}
+@keyframes fadeUp {
+  from { opacity:0; transform: translate(-50%, 24px); }
+  to   { opacity:1; transform: translate(-50%, 0); }
+}
+
+/* ---- INTRO STRIP ---- */
+.intro-strip {
+  background: #fff;
+  padding: 22px 0;
+  text-align: center;
+  border-bottom: 1px solid #e8e2dc;
+}
+.intro-strip p {
+  font-family: Arial, sans-serif;
+  font-size: 9px;
+  letter-spacing: 5px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+/* ---- BRANDS SECTION ---- */
+.brands-section {
+  padding: 60px 5vw 70px;
+  background: #f3ede8;
+}
+.section-label {
+  font-family: Arial, sans-serif;
+  font-size: 9px;
+  letter-spacing: 6px;
+  color: #aaa;
+  text-align: center;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.section-title {
+  font-family: Georgia, serif;
+  font-size: clamp(22px, 3vw, 36px);
+  font-weight: 300;
+  letter-spacing: 6px;
+  text-align: center;
+  margin-bottom: 50px;
+  color: #1a1a1a;
+}
+
+/* BRANDS GRID */
+.brands-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.brand-card {
+  text-decoration: none;
+  color: #000;
+  display: block;
+  overflow: hidden;
+}
+.brand-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  background: #ebe3dc;
+}
+.brand-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+  display: block;
+}
+.brand-card:hover .brand-img-wrap img {
+  transform: scale(1.05);
+}
+.brand-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 24px;
+  transition: background 0.4s;
+}
+.brand-card:hover .brand-overlay {
+  background: rgba(0,0,0,0.22);
+}
+.brand-explore {
+  font-family: Arial, sans-serif;
+  font-size: 9px;
+  letter-spacing: 4px;
+  color: #fff;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+.brand-card:hover .brand-explore {
+  opacity: 1;
+  transform: translateY(0);
+}
+.brand-name {
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+  letter-spacing: 4px;
+  padding: 14px 4px 8px;
+  text-align: center;
+  color: #333;
+}
+
+/* Featured row: first 3 full width in a row, then 3, then 3 */
+.brands-grid .brand-card:nth-child(1),
+.brands-grid .brand-card:nth-child(2),
+.brands-grid .brand-card:nth-child(3) {
+  grid-column: span 1;
+}
+
+/* ---- SHOP LINK ---- */
+.shop-link-wrap {
+  text-align: center;
+  padding: 50px 0 60px;
+  background: #f3ede8;
+}
+.shop-link-wrap a {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+  letter-spacing: 6px;
+  color: #000;
+  text-decoration: none;
+  border-bottom: 1px solid #000;
+  padding-bottom: 4px;
+  transition: letter-spacing 0.3s;
+}
+.shop-link-wrap a:hover {
+  letter-spacing: 8px;
+}
+
+/* ---- MOBILE ---- */
+@media(max-width:768px){
+
+  /* HERO */
+  .hero-wrap{height:65vh;}
+  .hero-text{
+    bottom:44px;
+    width:88%;
+  }
+  .hero-text h2{
+    font-size:clamp(32px,9vw,52px);
+    letter-spacing:5px;
+    margin-bottom:10px;
+  }
+  .hero-text p{
+    font-size:10px;
+    letter-spacing:3px;
+    margin-bottom:24px;
+  }
+  .hero-cta{
+    padding:13px 36px;
+    font-size:9px;
+    letter-spacing:4px;
+  }
+
+  /* INTRO STRIP */
+  .intro-strip{padding:14px 20px;}
+  .intro-strip p{
+    font-size:8px;
+    letter-spacing:3px;
+    line-height:1.6;
+  }
+
+  /* BRANDS SECTION */
+  .brands-section{padding:40px 0 50px;}
+  .section-label{font-size:8px;letter-spacing:4px;margin-bottom:8px;}
+  .section-title{
+    font-size:clamp(18px,6vw,28px);
+    letter-spacing:4px;
+    margin-bottom:28px;
+  }
+
+  /* BRANDS GRID — edge to edge, 2 columns */
+  .brands-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:3px;
+    padding:0;
+  }
+  .brand-img-wrap{aspect-ratio:2/3;}
+  .brand-name{
+    font-size:8px;
+    letter-spacing:3px;
+    padding:10px 4px 6px;
+  }
+
+  /* Last card full width if odd */
+  .brand-card:last-child:nth-child(odd){
+    grid-column:span 2;
+  }
+  .brand-card:last-child:nth-child(odd) .brand-img-wrap{
+    aspect-ratio:16/9;
+  }
+}
+
+@media(max-width:380px){
+  .hero-text h2{font-size:28px;letter-spacing:4px;}
+  .brands-grid{gap:2px;}
+}
 </style>
 </head>
-
 <body>
-<!-- POPUP
-<div id="popupOverlay">
 
-  <div class="popup-box">
-
-    CLOSE
-    <span class="popup-close">&times;</span>
-
-    LEFT IMAGE
-    <div class="popup-image">
-      <img src="comingsoon.jpeg">
-    </div>
-
-    RIGHT CONTENT
-    <div class="popup-content">
-
-      <h2>COMING SOON !</h2>
-
-      <p>Stay tuned for something beautiful.</p>
-
-
-    </div>
-
-  </div>
-
-</div> -->
 <div class="announcement-bar">
 
 <button class="announce-btn" id="announcePrev">&#8249;</button>
@@ -294,125 +638,161 @@
 </div>
 </div>
 
-<section class="home-hero-refy">
-
-  <div class="hero-video-full">
-<video class="hero-video" autoplay muted loop playsinline poster="hero.jpg">
-  <source src="hero.mp4 (2).mp4" type="video/mp4">
-</video>
+<!-- HERO -->
+<div class="hero-wrap">
+  <video autoplay muted loop playsinline>
+    <source src="hero.mp4 (2).mp4" type="video/mp4">
+  </video>
+  <div class="hero-veil"></div>
+  <div class="hero-text">
+    <h2>YOUR GLOW<br>STARTS HERE</h2>
+    <p>YOUR FAVORITE BEAUTY, ALL IN ONE PLACE</p>
+    <a href="shop" class="hero-cta">SHOP NOW</a>
   </div>
+</div>
 
-  <div class="hero-text-under">
-    <p class="home-kicker">GLOW COLLECTION</p>
-    <h2>ELEVATE YOUR EVERYDAY GLOW.</h2>
-<p class="home-desc">
-YOUR FAVORITE BEAUTY, ALL IN ONE PLACE.
-</p>
+<!-- INTRO STRIP -->
+<div class="intro-strip">
+  <p>100% ORIGINAL &nbsp;·&nbsp; BAHRAIN'S BEAUTY DESTINATION</p>
+</div>
 
-    <a href="shop" class="home-hero-btn">DISCOVER ALL</a>
+<!-- BRANDS SECTION -->
+<section class="brands-section">
+  <p class="section-label">CURATED FOR YOU</p>
+  <h2 class="section-title">BRANDS</h2>
+
+  <div class="brands-grid">
+    
+      <a href="shop?filter=hudabeauty" class="brand-card">
+        <div class="brand-img-wrap">
+          <img src="titleHudabeauty.jpg" alt="HUDA BEAUTY">
+          <div class="brand-overlay">
+            <span class="brand-explore">EXPLORE →</span>
+          </div>
+        </div>
+        <p class="brand-name">HUDA BEAUTY</p>
+      </a>
+      <a href="shop?filter=makeupbymario" class="brand-card">
+        <div class="brand-img-wrap">
+          <img src="titleMakeupByMario.jpg" alt="MAKEUP BY MARIO">
+          <div class="brand-overlay">
+            <span class="brand-explore">EXPLORE →</span>
+          </div>
+        </div>
+        <p class="brand-name">MAKEUP BY MARIO</p>
+      </a>
+      <a href="shop?filter=fentybeauty" class="brand-card">
+        <div class="brand-img-wrap">
+          <img src="titleFentyBeauty.jpg" alt="FENTY BEAUTY">
+          <div class="brand-overlay">
+            <span class="brand-explore">EXPLORE →</span>
+          </div>
+        </div>
+        <p class="brand-name">FENTY BEAUTY</p>
+      </a>
+      <a href="shop?filter=refy" class="brand-card">
+        <div class="brand-img-wrap">
+          <img src="titleREFY.jpg" alt="REFY">
+          <div class="brand-overlay">
+            <span class="brand-explore">EXPLORE →</span>
+          </div>
+        </div>
+        <p class="brand-name">REFY</p>
+      </a>
+      <a href="shop?filter=loca" class="brand-card">
+        <div class="brand-img-wrap">
+          <img src="titleLoca.jpg" alt="LOCA">
+          <div class="brand-overlay">
+            <span class="brand-explore">EXPLORE →</span>
+          </div>
+        </div>
+        <p class="brand-name">LOCA</p>
+      </a>
+      <a href="shop?filter=kosas" class="brand-card">
+        <div class="brand-img-wrap">
+          <img src="titleKosas.jpg" alt="KOSAS">
+          <div class="brand-overlay">
+            <span class="brand-explore">EXPLORE →</span>
+          </div>
+        </div>
+        <p class="brand-name">KOSAS</p>
+      </a>
+      <a href="shop?filter=onesize" class="brand-card">
+        <div class="brand-img-wrap">
+          <img src="titleOnesize.jpg" alt="ONE/SIZE">
+          <div class="brand-overlay">
+            <span class="brand-explore">EXPLORE →</span>
+          </div>
+        </div>
+        <p class="brand-name">ONE/SIZE</p>
+      </a>
+      <a href="shop?filter=hauslabs" class="brand-card">
+        <div class="brand-img-wrap">
+          <img src="titleHausLabss143.jpg" alt="HAUS LABS">
+          <div class="brand-overlay">
+            <span class="brand-explore">EXPLORE →</span>
+          </div>
+        </div>
+        <p class="brand-name">HAUS LABS</p>
+      </a>
+      <a href="shop?filter=saie" class="brand-card">
+        <div class="brand-img-wrap">
+          <img src="titleSaie.jpg" alt="SAIE">
+          <div class="brand-overlay">
+            <span class="brand-explore">EXPLORE →</span>
+          </div>
+        </div>
+        <p class="brand-name">SAIE</p>
+      </a>
+
+      <a href="#" class="brand-card coming-soon-card">
+        <div class="brand-img-wrap">
+          <img src="titleHaileyBieber.jpg" alt="RHODE">
+          <div class="brand-overlay">
+            <span class="brand-explore">EXPLORE →</span>
+          </div>
+          <div class="coming-soon-badge">
+            <span class="badge-line"></span>
+            <span class="badge-soon">COMING SOON</span>
+            <span class="badge-sub">STAY TUNED</span>
+          </div>
+        </div>
+        <p class="brand-name">RHODE</p>
+      </a>
+
+      <a href="#" class="brand-card coming-soon-card">
+        <div class="brand-img-wrap">
+          <img src="titleTooFaced.jpg" alt="TOO FACED">
+          <div class="brand-overlay">
+            <span class="brand-explore">EXPLORE →</span>
+          </div>
+          <div class="coming-soon-badge">
+            <span class="badge-line"></span>
+            <span class="badge-soon">COMING SOON</span>
+            <span class="badge-sub">STAY TUNED</span>
+          </div>
+        </div>
+        <p class="brand-name">TOO FACED</p>
+      </a>
+
+      <a href="#" class="brand-card coming-soon-card">
+        <div class="brand-img-wrap">
+          <img src="titleCHARLOTTETIBURY.jpeg" alt="CHARLOTTE TILBURY">
+          <div class="brand-overlay">
+            <span class="brand-explore">EXPLORE →</span>
+          </div>
+          <div class="coming-soon-badge">
+            <span class="badge-line"></span>
+            <span class="badge-soon">COMING SOON</span>
+            <span class="badge-sub">STAY TUNED</span>
+          </div>
+        </div>
+        <p class="brand-name">CHARLOTTE TILBURY</p>
+      </a>
   </div>
-
 </section>
 
 
-<section class="categories-section">
-
-<p class="sub-title">BRANDS</p>
-
-<div class="categories-wrapper">
-
-<button class="nav-btn prev" id="prevBtn">&#8249;</button>
-
-<div class="categories-slider" id="categoriesSlider">
-
-<!-- Huda Beauty -->
-<div class="category-card">
-<div class="category-image-box">
-<img src="titleHudabeauty.jpg" alt="HUDA BEAUTY">
-<a href="shop?filter=hudabeauty" class="view-product-btn">EXPLORE</a>
-</div>
-<span class="category-label">HUDA BEAUTY</span>
-</div>
-
-<!-- Makeup By Mario -->
-<div class="category-card">
-<div class="category-image-box">
-<img src="titleMakeupByMario.jpg" alt="MAKEUP BY MARIO">
-<a href="shop?filter=makeupbymario" class="view-product-btn">EXPLORE</a>
-</div>
-<span class="category-label">MAKEUP BY MARIO</span>
-</div>
-
-<!-- Fenty Beauty -->
-<div class="category-card">
-<div class="category-image-box">
-<img src="titleFentyBeauty.jpg" alt="FENTY BEAUTY">
-<a href="shop?filter=fentybeauty" class="view-product-btn">EXPLORE</a>
-</div>
-<span class="category-label">FENTY BEAUTY</span>
-</div>
-
-<!-- REFY -->
-<div class="category-card">
-<div class="category-image-box">
-<img src="titleREFY.jpg" alt="REFY">
-<a href="shop?filter=refy" class="view-product-btn">EXPLORE</a>
-</div>
-<span class="category-label">REFY</span>
-</div>
-
-<!-- LOCA -->
-<div class="category-card">
-<div class="category-image-box">
-<img src="titleLoca.jpg" alt="LOCA">
-<a href="shop?filter=loca" class="view-product-btn">EXPLORE</a>
-</div>
-<span class="category-label">LOCA</span>
-</div>
-
-<!-- KOSAS -->
-<div class="category-card">
-<div class="category-image-box">
-<img src="titleKosas.jpg" alt="KOSAS">
-<a href="shop?filter=kosas" class="view-product-btn">EXPLORE</a>
-</div>
-<span class="category-label">KOSAS</span>
-</div>
-
-<!-- ONESIZE -->
-<div class="category-card">
-<div class="category-image-box">
-<img src="titleOnesize.jpg" alt="ONE/SIZE">
-<a href="shop?filter=onesize" class="view-product-btn">EXPLORE</a>
-</div>
-<span class="category-label">ONE/SIZE</span>
-</div>
-
-<!-- HAUS LABS -->
-<div class="category-card">
-<div class="category-image-box">
-<img src="titleHausLabss143.jpg" alt="HAUS LABS">
-<a href="shop?filter=hauslabs" class="view-product-btn">EXPLORE</a>
-</div>
-<span class="category-label">HAUS LABS</span>
-</div>
-
-<!-- Saie -->
-<div class="category-card">
-<div class="category-image-box">
-<img src="titleSaie.jpg" alt="SAIE">
-<a href="shop?filter=saie" class="view-product-btn">EXPLORE</a>
-</div>
-<span class="category-label">SAIE</span>
-</div>
-
-</div>
-
-<button class="nav-btn next" id="nextBtn">&#8250;</button>
-
-</div>
-
-</section>
 
 <footer class="footer-findus" id="findus">
 
@@ -423,10 +803,6 @@ YOUR FAVORITE BEAUTY, ALL IN ONE PLACE.
 </div>
 
 </footer>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-<script src="titlepage.js"></script>
 
 <script>
 var cart=[];
@@ -468,5 +844,7 @@ function sendOrder(){if(cart.length)window.open(buildWA(cart),"_blank");}
 function openCart(){document.getElementById("cartDrawer").classList.add("open");document.getElementById("cartOverlay").classList.add("open");document.body.classList.add("menu-open");}
 function closeCart(){document.getElementById("cartDrawer").classList.remove("open");document.getElementById("cartOverlay").classList.remove("open");document.body.classList.remove("menu-open");}
 </script>
+<script src="titlepage.js"></script>
+
 </body>
 </html>
